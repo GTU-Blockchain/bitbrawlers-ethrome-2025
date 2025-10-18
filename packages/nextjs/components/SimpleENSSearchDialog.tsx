@@ -84,7 +84,7 @@ export const SimpleENSSearchDialog = () => {
                           <Image
                             src={result.avatar}
                             alt="Player Avatar"
-                            className="player-avatar"
+                            className="player-avatar rounded-full"
                             width={40}
                             height={40}
                           />

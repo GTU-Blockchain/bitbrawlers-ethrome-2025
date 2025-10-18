@@ -162,8 +162,8 @@ export const ENSSearchBar = ({
                 src={searchResult.avatar}
                 alt="ENS Avatar"
                 className="ens-avatar rounded-full"
-                width={32}
-                height={32}
+                width={40}
+                height={40}
               />
             )}
             <div className="result-info">
