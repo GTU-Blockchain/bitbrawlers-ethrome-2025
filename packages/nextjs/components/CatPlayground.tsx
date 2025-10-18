@@ -207,9 +207,17 @@ const CatPlayground = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-blue-100 to-purple-100 relative overflow-hidden">
+    <div
+      className="w-full h-screen relative overflow-hidden"
+      style={{
+        backgroundImage: "url(/background.png)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="absolute inset-0 flex items-center justify-center">
-        <h1 className="text-6xl font-bold text-center bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <h1 className="text-6xl font-bold text-center bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent drop-shadow-lg">
           Cat Playground
         </h1>
       </div>
