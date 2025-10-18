@@ -30,8 +30,15 @@ const CatPlayground = () => {
   const [cats, setCats] = useState<Cat[]>([]);
   const [containerSize, setContainerSize] = useState({ width: 1200, height: 600 });
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
+  const [backgroundImage, setBackgroundImage] = useState<string>("");
   const catAreaRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
+
+  // Select random background on mount
+  useEffect(() => {
+    const randomBackground = Math.floor(Math.random() * 10); // 0-9 for background-0.png to background-9.png
+    setBackgroundImage(`/backgrounds/background-${randomBackground}.png`);
+  }, []);
 
   // Update container size on resize - using cat-area dimensions
   useEffect(() => {
@@ -238,7 +245,7 @@ const CatPlayground = () => {
     <div
       className="w-full h-screen relative overflow-hidden"
       style={{
-        backgroundImage: "url(/background.png)",
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
