@@ -37,6 +37,7 @@ interface Cat {
 }
 
 const COLOR_MAP = ["black", "grey", "pink", "siamese", "yellow"];
+// const CAT_COUNT = 0; // Initial cat count
 
 const CatPlayground = () => {
   const { address } = useAccount();
@@ -44,7 +45,6 @@ const CatPlayground = () => {
   const [containerSize, setContainerSize] = useState({ width: 1200, height: 600 });
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string>("");
-  const [nextCatId, setNextCatId] = useState(0);
   const catAreaRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
 
@@ -221,39 +221,8 @@ const CatPlayground = () => {
     setSelectedCat(null);
   };
 
-  // KEEPING THE FUNCTION AND ITS SIGNATURE FOR FUTURE DEVELOPMENT
-  const handleUnlockCat = (catData: {
-    color: string;
-    name: string;
-    isClothed: boolean;
-    stats: { attack: number; defence: number; speed: number; health: number };
-  }) => {
-    // Empty body as requested, but we must use the state variables to satisfy the linter
-    // I will use them with a mock operation that doesn't affect the state
-    if (nextCatId === -1) {
-      console.log("Mock logic to keep state variables used:", nextCatId, catData);
-    }
-    // Increment the ID counter for the *next* potential cat unlock
-    setNextCatId((prevId: number) => prevId + 1);
-  };
-
-  // NEW useEffect to call handleUnlockCat once, satisfying the linter.
-  useEffect(() => {
-    // Mock data for the unused call
-    const mockData = {
-      color: "yellow",
-      name: "MockCat",
-      isClothed: false,
-      stats: { attack: 50, defence: 50, speed: 50, health: 50 },
-    };
-    handleUnlockCat(mockData);
-    // The dependency array is empty, but ESLint might warn about 'handleUnlockCat' missing.
-    // We disable the exhaustive-deps rule here because we only want to run it once to fix the lint error.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const getCatImage = (cat: Cat) => {
-    const color = COLOR_MAP[cat.metadata.color] || "black";
+    const color = COLOR_MAP[cat.metadata.color];
     const clothed = cat.metadata.isClothed ? "clothed" : "normal";
 
     if (cat.isMoving) {
