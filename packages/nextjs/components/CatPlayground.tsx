@@ -319,38 +319,6 @@ const CatPlayground = () => {
             <h2>🔗 Connect your wallet</h2>
             <p>Connect your wallet to see your cats!</p>
           </div>
-          <style jsx>{`
-            .no-cats-message {
-              position: fixed;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              z-index: 100;
-              background: #ffffff;
-              border: 4px solid #333;
-              box-shadow:
-                4px 4px 0px #333,
-                8px 8px 0px #666;
-              padding: 40px;
-              text-align: center;
-              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
-              max-width: 500px;
-              width: 90vw;
-            }
-
-            .no-cats-content h2 {
-              color: #333;
-              margin-bottom: 16px;
-              font-size: 1.5rem;
-              text-shadow: 1px 1px 0px #666;
-            }
-
-            .no-cats-content p {
-              color: #666;
-              margin-bottom: 24px;
-              font-size: 1rem;
-            }
-          `}</style>
         </div>
       ) : cats.length === 0 ? (
         <div className="no-cats-message">
@@ -358,46 +326,67 @@ const CatPlayground = () => {
             <h2 className="text-2xl font-bold">😿 Unfortunately you have no cats :/</h2>
             <p>Mint your first cat to start playing!</p>
           </div>
-          <style jsx>{`
-            .no-cats-message {
-              position: fixed;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              z-index: 99;
-              background: #ffffff;
-              border: 4px solid #333;
-              box-shadow:
-                4px 4px 0px #333,
-                8px 8px 0px #666;
-              padding: 40px;
-              text-align: center;
-              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
-              max-width: 500px;
-              width: 90vw;
-            }
-
-            .no-cats-content h2 {
-              color: #333;
-              margin-bottom: 16px;
-              font-size: 1.5rem;
-              text-shadow: 1px 1px 0px #666;
-            }
-
-            .no-cats-content p {
-              color: #666;
-              margin-bottom: 24px;
-              font-size: 1rem;
-            }
-
-            .nes-btn {
-              cursor: pointer;
-            }
-          `}</style>
         </div>
       ) : (
-        <CatDashboard cat={selectedCat} onClose={closeDashboard} />
+        selectedCat && <CatDashboard cat={selectedCat} onClose={closeDashboard} />
       )}
+
+      {/* Custom styles */}
+      <style jsx>{`
+        .no-cats-message {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 100;
+          background: #ffffff;
+          border: 4px solid #333;
+          box-shadow:
+            4px 4px 0px #333,
+            8px 8px 0px #666;
+          padding: 40px;
+          text-align: center;
+          font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
+          max-width: 500px;
+          width: 90vw;
+        }
+
+        .no-cats-content h2 {
+          color: #333;
+          margin-bottom: 16px;
+          font-size: 1.5rem;
+          text-shadow: 1px 1px 0px #666;
+        }
+
+        .no-cats-content p {
+          color: #666;
+          margin-bottom: 24px;
+          font-size: 1rem;
+        }
+
+        .nes-btn {
+          cursor: pointer;
+        }
+
+        .cat-title {
+          font-size: 4rem;
+          font-weight: bold;
+          color: #fff;
+          text-shadow:
+            4px 4px 0 #000,
+            8px 8px 0 #000;
+          font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
+        }
+
+        @media (max-width: 768px) {
+          .cat-title {
+            font-size: 2.5rem;
+            text-shadow:
+              2px 2px 0 #9c27b0,
+              4px 4px 0 #4a148c;
+          }
+        }
+      `}</style>
     </div>
   );
 };
