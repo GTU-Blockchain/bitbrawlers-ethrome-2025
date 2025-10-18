@@ -22,7 +22,7 @@ interface CatDashboardProps {
   onClose: () => void;
 }
 
-/* ❤️ Health hearts */
+/* ❤️ Health hearts (UPDATED: is-medium for bigger size) */
 const renderHearts = (health: number) => {
   const totalHearts = 5;
   const hearts = [];
@@ -31,11 +31,11 @@ const renderHearts = (health: number) => {
   for (let i = 0; i < totalHearts; i++) {
     const heartValue = (i + 1) * healthPerHeart;
     if (health >= heartValue) {
-      hearts.push(<i key={i} className="nes-icon is-small heart" />);
+      hearts.push(<i key={i} className="nes-icon is-medium heart" />);
     } else if (health >= heartValue - healthPerHeart / 2) {
-      hearts.push(<i key={i} className="nes-icon is-small heart is-half" />);
+      hearts.push(<i key={i} className="nes-icon is-medium heart is-half" />);
     } else {
-      hearts.push(<i key={i} className="nes-icon is-small heart is-empty" />);
+      hearts.push(<i key={i} className="nes-icon is-medium heart is-empty" />);
     }
   }
 
@@ -145,6 +145,11 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
       {!showShop && (
         <dialog className="nes-dialog is-rounded cat-dashboard" open>
           <div className="dashboard-content">
+            {/* MODIFIED: Simple X Close Button (is-small) in the corner */}
+            <button type="button" className="close-x-btn" onClick={onClose} title="Close Dashboard">
+              <i className="nes-icon close is-small"></i>
+            </button>
+
             {/* Header */}
             <div className="cat-header">
               <div className="cat-image-container">
@@ -172,22 +177,13 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
                     <div className="stat-header">
                       <span className="stat-icon">{getStatIcon(statName)}</span>
                       <span className="stat-name">{statName.charAt(0).toUpperCase() + statName.slice(1)}</span>
-                      <span className="stat-value">{value}/100</span>
+
+                      {/* Conditionally render the value (removed for health) */}
+                      {statName !== "health" && <span className="stat-value">{value}/100</span>}
                     </div>
 
                     {statName === "health" ? (
-                      <>
-                        <div className="stat-bar-container">
-                          <div
-                            className="stat-bar"
-                            style={{
-                              width: getStatBarWidth(value),
-                              backgroundColor: getStatColor(value),
-                            }}
-                          />
-                        </div>
-                        {renderHearts(value)}
-                      </>
+                      <div className="health-stat-content">{renderHearts(value)}</div>
                     ) : (
                       <div className="stat-bar-container">
                         <div
@@ -211,12 +207,6 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
               </button>
               <button className="nes-btn is-warning" onClick={handleSetDefault}>
                 Set Default
-              </button>
-            </div>
-
-            <div className="dialog-menu">
-              <button type="button" className="nes-btn" onClick={onClose}>
-                Close
               </button>
             </div>
           </div>
@@ -246,6 +236,32 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
               position: relative;
               z-index: 99;
             }
+
+            /* MODIFIED: CSS for the tighter X close button */
+            .close-x-btn {
+              position: absolute;
+              top: -10px; /* CHANGED: Negative value to pull outside of padding */
+              right: -10px; /* CHANGED: Negative value to pull outside of padding */
+              background: none;
+              border: none;
+              padding: 0;
+              margin: 0;
+              cursor: pointer;
+              z-index: 101;
+            }
+
+            .close-x-btn .nes-icon {
+              background-color: transparent;
+              border: none;
+              padding: 0;
+              display: block;
+              box-shadow: none;
+            }
+
+            .close-x-btn:hover .nes-icon {
+              filter: opacity(0.8);
+            }
+            /* End MODIFIED: CSS for the tighter X close button */
 
             .cat-header {
               display: flex;
@@ -333,9 +349,17 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
               transition: width 0.3s ease;
             }
 
+            /* MODIFIED: Health heart centering and spacing */
+            .health-stat-content {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              padding: 5px 0;
+            }
+
             .heart-container {
               display: flex;
-              gap: 4px;
+              gap: 8px; /* Increased spacing */
               margin-top: 4px;
             }
 
