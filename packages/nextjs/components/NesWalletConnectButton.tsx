@@ -23,13 +23,23 @@ export const NesWalletConnectButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button className="nes-btn is-primary" onClick={openConnectModal} type="button">
+                  <button
+                    className="nes-btn is-primary"
+                    onClick={openConnectModal}
+                    type="button"
+                    style={{ minWidth: "120px" }}
+                  >
                     Connect
                   </button>
                 );
               }
               return (
-                <button className="nes-btn is-success" onClick={openAccountModal} type="button">
+                <button
+                  className="nes-btn is-success"
+                  onClick={openAccountModal}
+                  type="button"
+                  style={{ width: "140px" }}
+                >
                   {account.displayName}
                 </button>
               );

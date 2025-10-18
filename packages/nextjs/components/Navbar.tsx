@@ -29,7 +29,7 @@ export const Navbar = () => {
           <Image src="/logo.png" alt="BitBrawlers" width={64} height={64} />
         </div>
         <div className="navbar-end gap-2 flex">
-          <button className="nes-btn is-success" onClick={() => setShowUnlockDialog(true)}>
+          <button type="button" className="nes-btn is-success" onClick={() => setShowUnlockDialog(true)}>
             Unlock Cat
           </button>
           <SimpleENSSearchDialog />
@@ -38,6 +38,16 @@ export const Navbar = () => {
       </div>
 
       {showUnlockDialog && <UnlockCatDialog onClose={() => setShowUnlockDialog(false)} onUnlockCat={handleUnlockCat} />}
+
+      <style jsx>{`
+        .navbar-end :global(.nes-btn) {
+          min-width: 120px;
+        }
+
+        .navbar-end :global(button) {
+          min-width: 120px;
+        }
+      `}</style>
     </>
   );
 };

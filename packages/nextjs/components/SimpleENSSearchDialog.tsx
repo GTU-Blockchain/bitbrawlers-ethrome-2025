@@ -48,7 +48,7 @@ export const SimpleENSSearchDialog = () => {
   return (
     <>
       {/* NES.css Dialog Button */}
-      <button className="nes-btn is-primary" onClick={openDialog}>
+      <button type="button" className="nes-btn is-primary" onClick={openDialog}>
         Find Players
       </button>
 
@@ -118,7 +118,7 @@ export const SimpleENSSearchDialog = () => {
 
             {/* Dialog Menu */}
             <div className="dialog-menu">
-              <button type="button" className="nes-btn" onClick={closeDialog}>
+              <button type="button" className="nes-btn is-error" onClick={closeDialog}>
                 Close
               </button>
             </div>
@@ -265,6 +265,10 @@ export const SimpleENSSearchDialog = () => {
         .dialog-menu {
           margin-top: 20px;
           text-align: center;
+        }
+
+        .dialog-menu .nes-btn {
+          min-width: 120px;
         }
 
         @media (max-width: 768px) {

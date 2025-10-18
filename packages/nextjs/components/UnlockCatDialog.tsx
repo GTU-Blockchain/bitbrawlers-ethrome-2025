@@ -125,10 +125,10 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
 
         {/* Action Buttons */}
         <div className="dialog-actions">
-          <button className="nes-btn is-success" onClick={handleUnlock}>
+          <button type="button" className="nes-btn is-success" onClick={handleUnlock}>
             Unlock Cat
           </button>
-          <button className="nes-btn" onClick={onClose}>
+          <button type="button" className="nes-btn is-error" onClick={onClose}>
             Cancel
           </button>
         </div>
@@ -314,10 +314,11 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
           justify-content: center;
           gap: 16px;
           margin-top: 20px;
+          flex-wrap: wrap;
         }
 
-        button {
-          cursor: pointer;
+        .dialog-actions .nes-btn {
+          min-width: 120px;
         }
       `}</style>
     </dialog>
