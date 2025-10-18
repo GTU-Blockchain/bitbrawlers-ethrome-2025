@@ -219,12 +219,11 @@ export const ENSSearchDialog = () => {
         }
 
         .player-address {
-          font-family: monospace;
+          font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
           font-size: 0.7rem;
           color: #666;
           word-break: break-all;
         }
-
         .player-actions {
           display: flex;
           gap: 5px;

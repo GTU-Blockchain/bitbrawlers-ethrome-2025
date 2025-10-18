@@ -72,7 +72,7 @@ const CatShop = ({ onClose }: { onClose: () => void }) => {
           transform: translate(-50%, -50%);
           padding: 20px;
           color: #333;
-          font-family: "Pixelify Sans", "Courier New", monospace, sans-serif;
+          font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
           max-height: 80vh;
           overflow-y: auto;
           z-index: 100;
@@ -87,12 +87,11 @@ const CatShop = ({ onClose }: { onClose: () => void }) => {
         }
 
         .shop-content p {
-          font-family: monospace;
+          font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
           font-size: 1rem;
           color: #666;
           margin-bottom: 20px;
         }
-
         .dialog-menu {
           text-align: center;
           margin-top: 10px;
@@ -236,7 +235,7 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
               top: 50%;
               left: 50%;
               transform: translate(-50%, -50%);
-              font-family: "Pixelify Sans", "Courier New", monospace, sans-serif;
+              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
               max-height: 80vh;
               overflow-y: auto;
               z-index: 90;
@@ -278,11 +277,10 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
             }
 
             .cat-type {
-              font-family: monospace;
+              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
               font-size: 0.9rem;
               color: #666;
             }
-
             .stats-title {
               font-weight: bold;
               color: #333;
@@ -317,7 +315,7 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
             }
 
             .stat-value {
-              font-family: monospace;
+              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
               color: #666;
               font-size: 0.9rem;
             }

@@ -225,12 +225,11 @@ export const ENSSearchBar = ({
         }
 
         .ens-address {
-          font-family: monospace;
+          font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
           font-size: 0.9em;
           color: #666;
           word-break: break-all;
         }
-
         .search-error {
           background-color: #ffebee;
           border: 2px solid #f44336;
