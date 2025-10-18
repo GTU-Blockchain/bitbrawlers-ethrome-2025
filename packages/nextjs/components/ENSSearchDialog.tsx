@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ENSSearchBar } from "./searchBar";
 import { Address } from "viem";
 
@@ -12,21 +12,21 @@ interface ENSSearchResult {
   error?: string;
 }
 
-interface ENSSearchDialogProps {
-  onSearchResult?: (result: ENSSearchResult) => void;
-  buttonText?: string;
-  buttonClass?: string;
-  dialogTitle?: string;
-}
-
-export const ENSSearchDialog = ({
-  onSearchResult,
-  buttonText = "Search Players",
-  buttonClass = "nes-btn is-primary",
-  dialogTitle = "Find Cat Players",
-}: ENSSearchDialogProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const ENSSearchDialog = () => {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [searchResults, setSearchResults] = useState<ENSSearchResult[]>([]);
+
+  const openDialog = () => {
+    if (dialogRef.current) {
+      dialogRef.current.showModal();
+    }
+  };
+
+  const closeDialog = () => {
+    if (dialogRef.current) {
+      dialogRef.current.close();
+    }
+  };
 
   const handleSearchResult = (result: ENSSearchResult) => {
     if (result.address && result.name) {
@@ -38,172 +38,133 @@ export const ENSSearchDialog = ({
         return [result, ...prev.slice(0, 4)]; // Keep last 5 results
       });
     }
-    onSearchResult?.(result);
-  };
-
-  const openDialog = () => {
-    setIsOpen(true);
-  };
-
-  const closeDialog = () => {
-    setIsOpen(false);
   };
 
   const clearResults = () => {
     setSearchResults([]);
   };
 
+  const handlePlayerAction = (action: string, player: ENSSearchResult) => {
+    console.log(`${action} player:`, player);
+    // Here you can implement the actual game logic
+    // For example: navigate to player profile, start a challenge, etc.
+  };
+
   return (
     <>
-      {/* Dialog Button */}
-      <button type="button" className={buttonClass} onClick={openDialog}>
-        {buttonText}
+      {/* NES.css Dialog Button */}
+      <button
+        className="nes-btn is-primary"
+        onClick={openDialog}
+        style={{
+          position: "fixed",
+          top: "20px",
+          right: "20px",
+          zIndex: 1000,
+        }}
+      >
+        🔍 Find Players
       </button>
 
-      {/* Dialog Modal */}
-      {isOpen && (
-        <div className="dialog-overlay" onClick={closeDialog}>
-          <div className="dialog-container nes-container is-rounded" onClick={e => e.stopPropagation()}>
-            {/* Dialog Header */}
-            <div className="dialog-header">
-              <h2 className="dialog-title">{dialogTitle}</h2>
-              <button type="button" className="nes-btn is-error" onClick={closeDialog}>
-                ×
-              </button>
-            </div>
+      {/* NES.css Dialog Modal */}
+      <dialog ref={dialogRef} className="nes-dialog is-rounded">
+        <form method="dialog">
+          <p className="title">🐱 Find Cat Players</p>
+          <p className="subtitle">Search for other players using their ENS name or Ethereum address</p>
 
-            {/* Dialog Content */}
-            <div className="dialog-content">
-              <p className="dialog-description">Search for other players using their ENS name or Ethereum address</p>
-
-              <ENSSearchBar
-                onSearchResult={handleSearchResult}
-                placeholder="Enter ENS name like vitalik.eth or 0x..."
-                className="search-bar-wrapper"
-              />
-
-              {/* Search Results */}
-              {searchResults.length > 0 && (
-                <div className="results-section">
-                  <div className="results-header">
-                    <h3>Recent Searches</h3>
-                    <button onClick={clearResults} className="nes-btn is-warning">
-                      Clear
-                    </button>
-                  </div>
-
-                  <div className="results-list">
-                    {searchResults.map((result, index) => (
-                      <div key={`${result.address}-${index}`} className="result-item nes-container is-rounded">
-                        <div className="result-content">
-                          {result.avatar && (
-                            <img
-                              src={result.avatar}
-                              alt="Player Avatar"
-                              className="player-avatar"
-                              width="40"
-                              height="40"
-                            />
-                          )}
-                          <div className="player-info">
-                            <div className="player-name">{result.name}</div>
-                            <div className="player-address">{result.address}</div>
-                          </div>
-                          <div className="player-actions">
-                            <button
-                              className="nes-btn is-primary"
-                              onClick={() => {
-                                console.log("View profile for:", result.address);
-                                // Add your profile view logic here
-                              }}
-                            >
-                              View Profile
-                            </button>
-                            <button
-                              className="nes-btn is-success"
-                              onClick={() => {
-                                console.log("Challenge player:", result.address);
-                                // Add your challenge logic here
-                                closeDialog();
-                              }}
-                            >
-                              Challenge
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Dialog Footer */}
-            <div className="dialog-footer">
-              <button type="button" className="nes-btn" onClick={closeDialog}>
-                Close
-              </button>
-            </div>
+          <div className="search-section">
+            <ENSSearchBar onSearchResult={handleSearchResult} placeholder="Enter ENS name like vitalik.eth or 0x..." />
           </div>
-        </div>
-      )}
+
+          {/* Search Results */}
+          {searchResults.length > 0 && (
+            <div className="results-section">
+              <div className="results-header">
+                <h4>Recent Searches</h4>
+                <button
+                  type="button"
+                  onClick={clearResults}
+                  className="nes-btn is-error"
+                  style={{ fontSize: "0.8rem", padding: "5px 10px" }}
+                >
+                  Clear
+                </button>
+              </div>
+
+              <div className="results-list">
+                {searchResults.map((result, index) => (
+                  <div key={`${result.address}-${index}`} className="result-item">
+                    <div className="result-content">
+                      {result.avatar && (
+                        <img src={result.avatar} alt="Player Avatar" className="player-avatar" width="32" height="32" />
+                      )}
+                      <div className="player-info">
+                        <div className="player-name">{result.name}</div>
+                        <div className="player-address">{result.address}</div>
+                      </div>
+                      <div className="player-actions">
+                        <button
+                          type="button"
+                          className="nes-btn is-primary"
+                          onClick={() => handlePlayerAction("view", result)}
+                          style={{ fontSize: "0.7rem", padding: "3px 8px" }}
+                        >
+                          View
+                        </button>
+                        <button
+                          type="button"
+                          className="nes-btn is-success"
+                          onClick={() => handlePlayerAction("challenge", result)}
+                          style={{ fontSize: "0.7rem", padding: "3px 8px" }}
+                        >
+                          Fight!
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Dialog Menu */}
+          <menu className="dialog-menu">
+            <button className="nes-btn" onClick={closeDialog}>
+              Close
+            </button>
+          </menu>
+        </form>
+      </dialog>
 
       <style jsx>{`
-        .dialog-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(0, 0, 0, 0.5);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-          padding: 20px;
-        }
-
-        .dialog-container {
-          background-color: #ffffff;
-          border: 4px solid #333;
+        .nes-dialog {
           max-width: 600px;
-          width: 100%;
+          width: 90vw;
           max-height: 80vh;
           overflow-y: auto;
-          position: relative;
         }
 
-        .dialog-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 20px;
-          border-bottom: 2px solid #333;
-          background-color: #f0f0f0;
-        }
-
-        .dialog-title {
-          margin: 0;
-          color: #333;
-          font-size: 1.5rem;
-        }
-
-        .dialog-content {
-          padding: 20px;
-        }
-
-        .dialog-description {
-          color: #666;
-          margin-bottom: 20px;
+        .title {
+          font-size: 1.2rem;
+          margin-bottom: 10px;
           text-align: center;
         }
 
-        .search-bar-wrapper {
+        .subtitle {
+          font-size: 0.9rem;
+          color: #666;
+          text-align: center;
+          margin-bottom: 20px;
+        }
+
+        .search-section {
           margin-bottom: 20px;
         }
 
         .results-section {
           margin-top: 20px;
+          max-height: 300px;
+          overflow-y: auto;
         }
 
         .results-header {
@@ -211,11 +172,13 @@ export const ENSSearchDialog = ({
           justify-content: space-between;
           align-items: center;
           margin-bottom: 15px;
+          padding-bottom: 10px;
+          border-bottom: 2px solid #333;
         }
 
-        .results-header h3 {
+        .results-header h4 {
           margin: 0;
-          color: #333;
+          font-size: 1rem;
         }
 
         .results-list {
@@ -227,13 +190,14 @@ export const ENSSearchDialog = ({
         .result-item {
           background-color: #f8f9fa;
           border: 2px solid #333;
-          padding: 15px;
+          border-radius: 8px;
+          padding: 10px;
         }
 
         .result-content {
           display: flex;
           align-items: center;
-          gap: 15px;
+          gap: 10px;
         }
 
         .player-avatar {
@@ -250,45 +214,39 @@ export const ENSSearchDialog = ({
         .player-name {
           font-weight: bold;
           color: #333;
-          margin-bottom: 5px;
-          font-size: 1.1rem;
+          margin-bottom: 3px;
+          font-size: 0.9rem;
         }
 
         .player-address {
           font-family: monospace;
-          font-size: 0.9rem;
+          font-size: 0.7rem;
           color: #666;
           word-break: break-all;
         }
 
         .player-actions {
           display: flex;
-          gap: 10px;
+          gap: 5px;
           flex-shrink: 0;
         }
 
-        .player-actions .nes-btn {
-          font-size: 0.8rem;
-          padding: 5px 10px;
+        .dialog-menu {
+          margin-top: 20px;
+          text-align: center;
         }
 
-        .dialog-footer {
-          padding: 20px;
-          border-top: 2px solid #333;
-          background-color: #f0f0f0;
-          text-align: right;
-        }
-
+        /* Responsive design */
         @media (max-width: 768px) {
-          .dialog-container {
-            margin: 10px;
+          .nes-dialog {
+            width: 95vw;
             max-height: 90vh;
           }
 
           .result-content {
             flex-direction: column;
             align-items: flex-start;
-            gap: 10px;
+            gap: 8px;
           }
 
           .player-actions {
@@ -299,6 +257,25 @@ export const ENSSearchDialog = ({
           .player-actions .nes-btn {
             flex: 1;
           }
+        }
+
+        /* Custom scrollbar for results */
+        .results-section::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        .results-section::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 4px;
+        }
+
+        .results-section::-webkit-scrollbar-thumb {
+          background: #333;
+          border-radius: 4px;
+        }
+
+        .results-section::-webkit-scrollbar-thumb:hover {
+          background: #555;
         }
       `}</style>
     </>
