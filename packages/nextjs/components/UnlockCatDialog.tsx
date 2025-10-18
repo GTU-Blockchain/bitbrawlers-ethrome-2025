@@ -18,7 +18,7 @@ interface UnlockCatDialogProps {
 const CAT_COLORS = [
   { color: "grey", level: 1, name: "Grey" },
   { color: "black", level: 3, name: "Black" },
-  { color: "pink", level: 5, name: "Pink" },
+  { color: "pinkie", level: 5, name: "Pink" },
   { color: "siamese", level: 7, name: "Siamese" },
   { color: "yellow", level: 10, name: "Yellow" },
 ];
@@ -32,7 +32,7 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
 
   const getCatImage = (color: string) => {
     // Always use normal (non-clothed) version for unlock dialog
-    return `/cats/${color}/normal/Sitting ${color.charAt(0).toUpperCase() + color.slice(1)} Cat.gif`;
+    return `/cats/${color}/normal/${color}-sitting.gif`;
   };
 
   const isColorLocked = (requiredLevel: number) => {
@@ -180,6 +180,9 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
 
         .cat-preview-container {
           margin-bottom: 10px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
         .cat-preview-image {
