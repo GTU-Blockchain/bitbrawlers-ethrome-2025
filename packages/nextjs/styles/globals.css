@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
-@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap");
-@import "./node_modules/nes.css/css/nes.css" @custom-variant dark (&: where([data-theme=dark], [data-theme=dark] *));
+@import "nes.css/css/nes.css" @custom-variant dark (&: where([data-theme=dark], [data-theme=dark] *));
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
@@ -69,7 +68,7 @@
 }
 
 * {
-  font-family: "Pixelify Sans", "Courier New", monospace, sans-serif;
+  font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
 }
 
 /*
@@ -95,7 +94,7 @@
 
   body {
     min-height: 100vh;
-    font-family: "Pixelify Sans", "Courier New", monospace, sans-serif;
+    font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
   }
 
   h1,
@@ -127,3 +126,5 @@
 .link:hover {
   opacity: 80%;
 }
+
+
