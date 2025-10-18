@@ -3051,6 +3051,7 @@ __metadata:
     eslint-config-prettier: ~10.1.1
     eslint-plugin-prettier: ~5.2.4
     kubo-rpc-client: ~5.0.2
+    nes.css: ^2.3.0
     next: ~15.2.3
     next-nprogress-bar: ~2.3.13
     next-themes: ~0.3.0
@@ -10349,6 +10350,13 @@ __metadata:
   version: 1.0.0
   resolution: "negotiator@npm:1.0.0"
   checksum: 20ebfe79b2d2e7cf9cbc8239a72662b584f71164096e6e8896c8325055497c96f6b80cd22c258e8a2f2aa382a787795ec3ee8b37b422a302c7d4381b0d5ecfbb
+  languageName: node
+  linkType: hard
+
+"nes.css@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "nes.css@npm:2.3.0"
+  checksum: e789e770d965394bc48007e1411b6f6bb8e22d01e33f961659e4ed547561713dd7461225c417da6a9b6eab9c5396be86bd99446c9028cf54ba45a2968419547c
   languageName: node
   linkType: hard
 
