@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 interface Cat {
   id: number;
@@ -16,19 +17,19 @@ interface Cat {
 }
 
 const CAT_COLORS = ["black", "grey", "pink", "siamese", "yellow"];
-const CAT_COUNT = 12;
+const CAT_COUNT = 5;
 
 const CatPlayground = () => {
   const [cats, setCats] = useState<Cat[]>([]);
   const [containerSize, setContainerSize] = useState({ width: 1200, height: 600 });
-  const playgroundRef = useRef<HTMLDivElement>(null);
+  const catAreaRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
 
-  // Update container size on resize
+  // Update container size on resize - using cat-area dimensions
   useEffect(() => {
     const updateSize = () => {
-      if (playgroundRef.current) {
-        const rect = playgroundRef.current.getBoundingClientRect();
+      if (catAreaRef.current) {
+        const rect = catAreaRef.current.getBoundingClientRect();
         setContainerSize({ width: rect.width, height: rect.height });
       }
     };
@@ -41,11 +42,12 @@ const CatPlayground = () => {
   // Initialize cats
   useEffect(() => {
     const initialCats: Cat[] = [];
+    const catSize = 96;
     for (let i = 0; i < CAT_COUNT; i++) {
-      const startX = Math.random() * containerSize.width;
-      const startY = Math.random() * containerSize.height;
-      const targetX = Math.random() * containerSize.width;
-      const targetY = Math.random() * containerSize.height;
+      const startX = Math.random() * Math.max(0, containerSize.width - catSize);
+      const startY = Math.random() * Math.max(0, containerSize.height - catSize);
+      const targetX = Math.random() * Math.max(0, containerSize.width - catSize);
+      const targetY = Math.random() * Math.max(0, containerSize.height - catSize);
 
       initialCats.push({
         id: i,
@@ -56,8 +58,8 @@ const CatPlayground = () => {
         direction: targetX > startX ? 1 : -1,
         speed: 0.5 + Math.random() * 1.0, // Speed between 0.5 and 1.5
         isMoving: Math.random() > 0.3, // 70% chance to start moving
-        color: CAT_COLORS[Math.floor(Math.random() * CAT_COLORS.length)],
-        isClothed: Math.random() > 0.5, // 50% chance to be clothed
+        color: CAT_COLORS[i], // Use each color once
+        isClothed: false, // All cats are not clothed
       });
     }
     setCats(initialCats);
@@ -66,6 +68,7 @@ const CatPlayground = () => {
   // Animation loop
   useEffect(() => {
     const animate = () => {
+      const catSize = 96;
       setCats(prevCats => {
         return prevCats.map(cat => {
           let newX = cat.x;
@@ -83,8 +86,8 @@ const CatPlayground = () => {
 
             // If close to target, pick a new target
             if (distance < 10) {
-              newTargetX = Math.random() * containerSize.width;
-              newTargetY = Math.random() * containerSize.height;
+              newTargetX = Math.random() * Math.max(0, containerSize.width - catSize);
+              newTargetY = Math.random() * Math.max(0, containerSize.height - catSize);
               newDirection = newTargetX > cat.x ? 1 : -1;
             }
 
@@ -95,9 +98,9 @@ const CatPlayground = () => {
             newX += moveX;
             newY += moveY;
 
-            // Keep within bounds
-            newX = Math.max(0, Math.min(containerSize.width, newX));
-            newY = Math.max(0, Math.min(containerSize.height, newY));
+            // Keep within bounds (accounting for cat size of 96px)
+            newX = Math.max(0, Math.min(containerSize.width - catSize, newX));
+            newY = Math.max(0, Math.min(containerSize.height - catSize, newY));
 
             // Random chance to stop moving
             if (Math.random() > 0.998) {
@@ -107,8 +110,8 @@ const CatPlayground = () => {
             // Random chance to start moving
             if (Math.random() > 0.998) {
               newIsMoving = true;
-              newTargetX = Math.random() * containerSize.width;
-              newTargetY = Math.random() * containerSize.height;
+              newTargetX = Math.random() * Math.max(0, containerSize.width - catSize);
+              newTargetY = Math.random() * Math.max(0, containerSize.height - catSize);
               newDirection = newTargetX > cat.x ? 1 : -1;
             }
           }
@@ -162,14 +165,14 @@ const CatPlayground = () => {
           case "pink":
             return `/cats/${color}/${clothed}/Running Pinkie.gif`;
           case "siamese":
-            return `/cats/${color}/${clothed}/Running Siamese.png`;
+            return `/cats/${color}/${clothed}/Licking Siamese.gif`;
           case "yellow":
             return `/cats/${color}/${clothed}/Running Yellow Cat.gif`;
           case "grey":
-            return `/cats/${color}/${clothed}/Running Grey Cat.png`;
+            return `/cats/${color}/${clothed}/Licking Grey Cat.gif`;
           case "black":
           default:
-            return `/cats/${color}/${clothed}/Running Black Cat.png`;
+            return `/cats/${color}/${clothed}/Licking Black Cat-export.gif`;
         }
       }
     } else {
@@ -207,14 +210,26 @@ const CatPlayground = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-blue-100 to-purple-100 relative overflow-hidden">
+    <div
+      className="w-full h-screen relative overflow-hidden"
+      style={{
+        backgroundImage: "url(/background.png)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="absolute inset-0 flex items-center justify-center">
-        <h1 className="text-6xl font-bold text-center bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <h1 className="text-6xl font-bold text-center bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent drop-shadow-lg">
           Cat Playground
         </h1>
       </div>
 
-      <div ref={playgroundRef} className="absolute inset-0 w-full h-full" style={{ minHeight: "100vh" }}>
+      <div
+        id="cat-area"
+        ref={catAreaRef}
+        className="fixed bottom-0 left-0 right-0 z-50 h-48 bg-gradient-to-t from-black/10 to-transparent"
+      >
         {cats.map(cat => (
           <div
             key={cat.id}
@@ -225,13 +240,16 @@ const CatPlayground = () => {
               transform: `scaleX(${cat.direction})`,
             }}
           >
-            <img
+            <Image
               src={getCatImage(cat)}
               alt={`${cat.color} cat`}
+              width={96}
+              height={96}
               className="w-24 h-24 object-contain"
               style={{
                 filter: cat.direction < 0 ? "scaleX(-1)" : "none",
               }}
+              unoptimized
             />
           </div>
         ))}
