@@ -602,6 +602,70 @@ contract BitBrawlers is ERC721, ERC721URIStorage, Ownable {
         return ownerPetCount[_owner];
     }
 
+    /**
+     * @dev Get all cats for an owner
+     */
+    function getAllCats(
+        address _owner
+    ) public view returns (uint256[] memory tokenIds) {
+        uint256 count = ownerPetCount[_owner];
+        tokenIds = new uint256[](count);
+
+        uint256 index = 0;
+        for (uint256 i = 0; i < _tokenIdCounter; i++) {
+            try this.ownerOf(i) returns (address owner) {
+                if (owner == _owner) {
+                    tokenIds[index] = i;
+                    index++;
+                    if (index >= count) break;
+                }
+            } catch {
+                // Token doesn't exist, continue
+                continue;
+            }
+        }
+
+        return tokenIds;
+    }
+
+    /**
+     * @dev Get all cats with complete data for an owner
+     */
+    function getAllCatsWithData(
+        address _owner
+    )
+        public
+        view
+        returns (
+            uint256[] memory tokenIds,
+            PetStats[] memory stats,
+            PetMetadata[] memory metadata
+        )
+    {
+        uint256 count = ownerPetCount[_owner];
+        tokenIds = new uint256[](count);
+        stats = new PetStats[](count);
+        metadata = new PetMetadata[](count);
+
+        uint256 index = 0;
+        for (uint256 i = 0; i < _tokenIdCounter; i++) {
+            try this.ownerOf(i) returns (address owner) {
+                if (owner == _owner) {
+                    tokenIds[index] = i;
+                    stats[index] = petStats[i];
+                    metadata[index] = petMetadata[i];
+                    index++;
+                    if (index >= count) break;
+                }
+            } catch {
+                // Token doesn't exist, continue
+                continue;
+            }
+        }
+
+        return (tokenIds, stats, metadata);
+    }
+
     function supportsInterface(
         bytes4 interfaceId
     ) public view override(ERC721, ERC721URIStorage) returns (bool) {

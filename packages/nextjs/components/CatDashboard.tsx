@@ -3,18 +3,29 @@
 import { useState } from "react";
 import Image from "next/image";
 
-interface CatStats {
+const COLOR_MAP = ["black", "grey", "pink", "siamese", "yellow"];
+
+interface CatMetadata {
+  // Contract data
+  tokenId: number;
+  name: string;
+  ensDomain: string;
+  level: number;
+  battlesWon: number;
+  battlesLost: number;
+  createdAt: number;
+  // Stats from contract
   attack: number;
   defence: number;
   speed: number;
   health: number;
+  color: number;
+  isClothed: boolean;
 }
 
 interface Cat {
   id: number;
-  color: string;
-  isClothed: boolean;
-  stats: CatStats;
+  metadata: CatMetadata;
 }
 
 interface CatDashboardProps {
@@ -137,7 +148,7 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
   const getStatBarWidth = (value: number) => `${value}%`;
 
   const handleSetDefault = () => {
-    alert(`${cat.color} cat is now your default fighter!`);
+    alert(`${COLOR_MAP[cat.metadata.color]} cat is now your default fighter!`);
   };
 
   return (
@@ -154,8 +165,8 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
             <div className="cat-header">
               <div className="cat-image-container">
                 <Image
-                  src={getCatImage(cat.color, cat.isClothed)}
-                  alt={`${cat.color} cat`}
+                  src={getCatImage(COLOR_MAP[cat.metadata.color], cat.metadata.isClothed)}
+                  alt={`${COLOR_MAP[cat.metadata.color]} cat`}
                   width={100}
                   height={100}
                   className="cat-dashboard-image"
@@ -163,8 +174,13 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
                 />
               </div>
               <div className="cat-info">
-                <h2 className="cat-name">{cat.color.charAt(0).toUpperCase() + cat.color.slice(1)} Cat</h2>
-                <p className="cat-type">{cat.isClothed ? "Clothed Warrior" : "Wild Fighter"}</p>
+                <h2 className="cat-name">
+                  {cat.metadata.name ||
+                    `${COLOR_MAP[cat.metadata.color].charAt(0).toUpperCase() + COLOR_MAP[cat.metadata.color].slice(1)} Cat`}
+                </h2>
+                <p className="cat-type">{cat.metadata.isClothed ? "Clothed Warrior" : "Wild Fighter"}</p>
+                {cat.metadata.level && <p className="cat-level">Level {cat.metadata.level}</p>}
+                {cat.metadata.ensDomain && <p className="cat-ens">ENS: {cat.metadata.ensDomain}</p>}
               </div>
             </div>
 
@@ -172,7 +188,12 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
             <div className="stats-section">
               <h3 className="stats-title">Battle Stats</h3>
               <div className="stats-grid">
-                {Object.entries(cat.stats).map(([statName, value]) => (
+                {Object.entries({
+                  attack: cat.metadata.attack,
+                  defence: cat.metadata.defence,
+                  speed: cat.metadata.speed,
+                  health: cat.metadata.health,
+                }).map(([statName, value]) => (
                   <div key={statName} className="stat-item">
                     <div className="stat-header">
                       <span className="stat-icon">{getStatIcon(statName)}</span>
@@ -198,6 +219,23 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
                   </div>
                 ))}
               </div>
+
+              {/* Battle History */}
+              {(cat.metadata.battlesWon !== undefined || cat.metadata.battlesLost !== undefined) && (
+                <div className="battle-history">
+                  <h4 className="battle-title">Battle History</h4>
+                  <div className="battle-stats">
+                    <div className="battle-stat">
+                      <span className="battle-label">Wins:</span>
+                      <span className="battle-value">{cat.metadata.battlesWon || 0}</span>
+                    </div>
+                    <div className="battle-stat">
+                      <span className="battle-label">Losses:</span>
+                      <span className="battle-value">{cat.metadata.battlesLost || 0}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Buttons */}
@@ -297,6 +335,19 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
               font-size: 0.9rem;
               color: #666;
             }
+
+            .cat-level {
+              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
+              font-size: 0.8rem;
+              color: #4caf50;
+              font-weight: bold;
+            }
+
+            .cat-ens {
+              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
+              font-size: 0.8rem;
+              color: #2196f3;
+            }
             .stats-title {
               font-weight: bold;
               color: #333;
@@ -361,6 +412,48 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
               display: flex;
               gap: 8px; /* Increased spacing */
               margin-top: 4px;
+            }
+
+            .battle-history {
+              margin-top: 16px;
+              padding: 12px;
+              background: #f4f4f4;
+              border: 2px solid #333;
+              box-shadow: 2px 2px 0px #333;
+            }
+
+            .battle-title {
+              font-weight: bold;
+              color: #333;
+              margin-bottom: 8px;
+              text-align: center;
+              text-shadow: 1px 1px 0px #666;
+            }
+
+            .battle-stats {
+              display: flex;
+              justify-content: space-around;
+              gap: 16px;
+            }
+
+            .battle-stat {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 4px;
+            }
+
+            .battle-label {
+              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
+              font-size: 0.8rem;
+              color: #666;
+            }
+
+            .battle-value {
+              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
+              font-size: 1.2rem;
+              font-weight: bold;
+              color: #333;
             }
 
             .actions-section {
