@@ -5,6 +5,7 @@ import Image from "next/image";
 import { NesWalletConnectButton } from "./NesWalletConnectButton";
 import SimpleENSSearchDialog from "./SimpleENSSearchDialog";
 import UnlockCatDialog from "./UnlockCatDialog";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export const Navbar = () => {
   const [showUnlockDialog, setShowUnlockDialog] = useState(false);
@@ -22,32 +23,36 @@ export const Navbar = () => {
   };
 
   return (
-    <>
-      <div className="navbar bg-transparent fixed top-0 left-0 right-0 z-50 px-5 pt-5">
-        <div className="navbar-start">
-          <div className="dropdown"></div>
-          <Image src="/logo.png" alt="BitBrawlers" width={64} height={64} />
-        </div>
-        <div className="navbar-end gap-2 flex">
-          <button type="button" className="nes-btn is-success" onClick={() => setShowUnlockDialog(true)}>
-            Unlock Cat
-          </button>
-          <SimpleENSSearchDialog />
-          <NesWalletConnectButton />
-        </div>
-      </div>
+    <ConnectButton.Custom>
+      {({ account, chain, authenticationStatus, mounted }) => {
+        const ready = mounted && authenticationStatus !== "loading";
+        const connected =
+          ready && account && chain && (!authenticationStatus || authenticationStatus === "authenticated");
 
-      {showUnlockDialog && <UnlockCatDialog onClose={() => setShowUnlockDialog(false)} onUnlockCat={handleUnlockCat} />}
+        return (
+          <>
+            <div className="navbar bg-transparent fixed top-0 left-0 right-0 z-50 px-5 pt-5">
+              <div className="navbar-start">
+                <div className="dropdown"></div>
+                <Image src="/logo.png" alt="BitBrawlers" width={64} height={64} />
+              </div>
+              <div className="navbar-end gap-2 flex">
+                {connected && (
+                  <button className="nes-btn is-success" onClick={() => setShowUnlockDialog(true)}>
+                    Unlock Cat
+                  </button>
+                )}
+                <SimpleENSSearchDialog />
+                <NesWalletConnectButton />
+              </div>
+            </div>
 
-      <style jsx>{`
-        .navbar-end :global(.nes-btn) {
-          min-width: 120px;
-        }
-
-        .navbar-end :global(button) {
-          min-width: 120px;
-        }
-      `}</style>
-    </>
+            {showUnlockDialog && (
+              <UnlockCatDialog onClose={() => setShowUnlockDialog(false)} onUnlockCat={handleUnlockCat} />
+            )}
+          </>
+        );
+      }}
+    </ConnectButton.Custom>
   );
 };

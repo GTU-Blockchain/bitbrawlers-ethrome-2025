@@ -18,7 +18,7 @@ interface UnlockCatDialogProps {
 const CAT_COLORS = [
   { color: "grey", level: 1, name: "Grey" },
   { color: "black", level: 3, name: "Black" },
-  { color: "pinkie", level: 5, name: "Pink" },
+  { color: "pink", level: 5, name: "Pink" },
   { color: "siamese", level: 7, name: "Siamese" },
   { color: "yellow", level: 10, name: "Yellow" },
 ];
@@ -32,7 +32,7 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
 
   const getCatImage = (color: string) => {
     // Always use normal (non-clothed) version for unlock dialog
-    return `/cats/${color}/normal/${color}-sitting.gif`;
+    return `/cats/${color}/normal/Sitting ${color.charAt(0).toUpperCase() + color.slice(1)} Cat.gif`;
   };
 
   const isColorLocked = (requiredLevel: number) => {
@@ -94,7 +94,7 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
               return (
                 <div key={color} className="color-button-container">
                   <button
-                    className={`color-button ${selectedColor === color ? "is-primary" : ""} ${isLocked ? "is-disabled" : ""}`}
+                    className={`color-button ${selectedColor === color ? "is-primary" : ""} ${isLocked ? "is-disabled" : ""} ${isLocked ? "cursor-not-allowed" : "cursor-pointer"}`}
                     onClick={() => !isLocked && setSelectedColor(color)}
                     disabled={isLocked}
                   >
@@ -125,10 +125,10 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
 
         {/* Action Buttons */}
         <div className="dialog-actions">
-          <button type="button" className="nes-btn is-success" onClick={handleUnlock}>
+          <button className="nes-btn is-success cursor-pointer" onClick={handleUnlock}>
             Unlock Cat
           </button>
-          <button type="button" className="nes-btn is-error" onClick={onClose}>
+          <button className="nes-btn cursor-pointer" onClick={onClose}>
             Cancel
           </button>
         </div>
@@ -180,9 +180,6 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
 
         .cat-preview-container {
           margin-bottom: 10px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
         }
 
         .cat-preview-image {
@@ -231,7 +228,6 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
           color: #333;
           font-family: "Pixelify Sans", "Courier New", monospace, sans-serif;
           font-size: 0.9rem;
-          cursor: pointer;
           transition: all 0.2s ease;
           box-shadow: 2px 2px 0px #333;
         }
@@ -248,7 +244,6 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
         .color-button.is-disabled {
           background: #ccc;
           color: #666;
-          cursor: not-allowed;
           opacity: 0.6;
         }
 
@@ -314,11 +309,6 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
           justify-content: center;
           gap: 16px;
           margin-top: 20px;
-          flex-wrap: wrap;
-        }
-
-        .dialog-actions .nes-btn {
-          min-width: 120px;
         }
       `}</style>
     </dialog>
