@@ -188,6 +188,12 @@ export const ENSSearchBar = ({
         .search-input-container .nes-input {
           flex: 1;
           min-width: 0;
+          color: #333 !important;
+          font-weight: bold;
+        }
+
+        .search-input-container .nes-input::placeholder {
+          color: #666;
         }
 
         .search-result {
