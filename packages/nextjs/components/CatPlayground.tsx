@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import CatDashboard from "./CatDashboard";
 
 interface Cat {
   id: number;
@@ -14,6 +15,12 @@ interface Cat {
   isMoving: boolean;
   color: string;
   isClothed: boolean;
+  stats: {
+    attack: number;
+    defence: number;
+    speed: number;
+    health: number;
+  };
 }
 
 const CAT_COLORS = ["black", "grey", "pink", "siamese", "yellow"];
@@ -22,6 +29,7 @@ const CAT_COUNT = 5;
 const CatPlayground = () => {
   const [cats, setCats] = useState<Cat[]>([]);
   const [containerSize, setContainerSize] = useState({ width: 1200, height: 600 });
+  const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const catAreaRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
 
@@ -49,6 +57,14 @@ const CatPlayground = () => {
       const targetX = Math.random() * Math.max(0, containerSize.width - catSize);
       const targetY = Math.random() * Math.max(0, containerSize.height - catSize);
 
+      // Generate random stats for each cat
+      const generateStats = () => ({
+        attack: Math.floor(Math.random() * 40) + 30, // 30-70
+        defence: Math.floor(Math.random() * 40) + 30, // 30-70
+        speed: Math.floor(Math.random() * 40) + 30, // 30-70
+        health: Math.floor(Math.random() * 40) + 30, // 30-70
+      });
+
       initialCats.push({
         id: i,
         x: startX,
@@ -59,7 +75,8 @@ const CatPlayground = () => {
         speed: 0.5 + Math.random() * 1.0, // Speed between 0.5 and 1.5
         isMoving: Math.random() > 0.3, // 70% chance to start moving
         color: CAT_COLORS[i], // Use each color once
-        isClothed: false, // All cats are not clothed
+        isClothed: Math.random() > 0.5, // Random clothing
+        stats: generateStats(),
       });
     }
     setCats(initialCats);
@@ -139,6 +156,14 @@ const CatPlayground = () => {
       }
     };
   }, [containerSize]);
+
+  const handleCatClick = (cat: Cat) => {
+    setSelectedCat(cat);
+  };
+
+  const closeDashboard = () => {
+    setSelectedCat(null);
+  };
 
   const getCatImage = (cat: Cat) => {
     const color = cat.color;
@@ -233,12 +258,14 @@ const CatPlayground = () => {
         {cats.map(cat => (
           <div
             key={cat.id}
-            className="absolute transition-all duration-100 ease-linear"
+            className="absolute transition-all duration-100 ease-linear cursor-pointer hover:scale-110"
             style={{
               left: `${cat.x}px`,
               top: `${cat.y}px`,
               transform: `scaleX(${cat.direction})`,
             }}
+            onClick={() => handleCatClick(cat)}
+            title={`Click to view ${cat.color} cat stats`}
           >
             <Image
               src={getCatImage(cat)}
@@ -254,6 +281,9 @@ const CatPlayground = () => {
           </div>
         ))}
       </div>
+
+      {/* Cat Dashboard */}
+      <CatDashboard cat={selectedCat} onClose={closeDashboard} />
     </div>
   );
 };
