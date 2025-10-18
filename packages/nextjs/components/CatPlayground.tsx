@@ -16,7 +16,7 @@ interface Cat {
 }
 
 const CAT_COLORS = ["black", "grey", "pink", "siamese", "yellow"];
-const CAT_COUNT = 12;
+const CAT_COUNT = 5;
 
 const CatPlayground = () => {
   const [cats, setCats] = useState<Cat[]>([]);
@@ -56,8 +56,8 @@ const CatPlayground = () => {
         direction: targetX > startX ? 1 : -1,
         speed: 0.5 + Math.random() * 1.0, // Speed between 0.5 and 1.5
         isMoving: Math.random() > 0.3, // 70% chance to start moving
-        color: CAT_COLORS[Math.floor(Math.random() * CAT_COLORS.length)],
-        isClothed: Math.random() > 0.5, // 50% chance to be clothed
+        color: CAT_COLORS[i], // Use each color once
+        isClothed: false, // All cats are not clothed
       });
     }
     setCats(initialCats);
