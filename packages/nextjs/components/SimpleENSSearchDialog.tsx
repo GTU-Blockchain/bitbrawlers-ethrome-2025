@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { ENSSearchBar } from "./searchBar";
 import { Address } from "viem";
 
@@ -47,16 +48,7 @@ export const SimpleENSSearchDialog = () => {
   return (
     <>
       {/* NES.css Dialog Button */}
-      <button
-        className="nes-btn is-primary"
-        onClick={openDialog}
-        style={{
-          position: "fixed",
-          top: "20px",
-          right: "20px",
-          zIndex: 1000,
-        }}
-      >
+      <button className="nes-btn is-primary" onClick={openDialog}>
         Find Players
       </button>
 
@@ -89,12 +81,12 @@ export const SimpleENSSearchDialog = () => {
                     <div key={`${result.address}-${index}`} className="result-item nes-container is-rounded">
                       <div className="result-content">
                         {result.avatar && (
-                          <img
+                          <Image
                             src={result.avatar}
                             alt="Player Avatar"
                             className="player-avatar"
-                            width="40"
-                            height="40"
+                            width={40}
+                            height={40}
                           />
                         )}
                         <div className="player-info">
