@@ -364,7 +364,7 @@ const CatPlayground = () => {
               top: 50%;
               left: 50%;
               transform: translate(-50%, -50%);
-              z-index: 100;
+              z-index: 99;
               background: #ffffff;
               border: 4px solid #333;
               box-shadow:
