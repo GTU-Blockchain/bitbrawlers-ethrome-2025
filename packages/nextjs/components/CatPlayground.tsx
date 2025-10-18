@@ -270,9 +270,9 @@ const CatPlayground = () => {
             <Image
               src={getCatImage(cat)}
               alt={`${cat.color} cat`}
-              width={96}
-              height={96}
-              className="w-24 h-24 object-contain"
+              width={106}
+              height={108}
+              className="w-27 h-27 object-contain"
               style={{
                 filter: cat.direction < 0 ? "scaleX(-1)" : "none",
               }}
