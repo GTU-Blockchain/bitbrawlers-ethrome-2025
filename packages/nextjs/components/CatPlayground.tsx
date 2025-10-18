@@ -42,11 +42,12 @@ const CatPlayground = () => {
   // Initialize cats
   useEffect(() => {
     const initialCats: Cat[] = [];
+    const catSize = 96;
     for (let i = 0; i < CAT_COUNT; i++) {
-      const startX = Math.random() * containerSize.width;
-      const startY = Math.random() * containerSize.height;
-      const targetX = Math.random() * containerSize.width;
-      const targetY = Math.random() * containerSize.height;
+      const startX = Math.random() * Math.max(0, containerSize.width - catSize);
+      const startY = Math.random() * Math.max(0, containerSize.height - catSize);
+      const targetX = Math.random() * Math.max(0, containerSize.width - catSize);
+      const targetY = Math.random() * Math.max(0, containerSize.height - catSize);
 
       initialCats.push({
         id: i,
@@ -67,6 +68,7 @@ const CatPlayground = () => {
   // Animation loop
   useEffect(() => {
     const animate = () => {
+      const catSize = 96;
       setCats(prevCats => {
         return prevCats.map(cat => {
           let newX = cat.x;
@@ -84,8 +86,8 @@ const CatPlayground = () => {
 
             // If close to target, pick a new target
             if (distance < 10) {
-              newTargetX = Math.random() * containerSize.width;
-              newTargetY = Math.random() * containerSize.height;
+              newTargetX = Math.random() * Math.max(0, containerSize.width - catSize);
+              newTargetY = Math.random() * Math.max(0, containerSize.height - catSize);
               newDirection = newTargetX > cat.x ? 1 : -1;
             }
 
@@ -96,9 +98,9 @@ const CatPlayground = () => {
             newX += moveX;
             newY += moveY;
 
-            // Keep within bounds
-            newX = Math.max(0, Math.min(containerSize.width, newX));
-            newY = Math.max(0, Math.min(containerSize.height, newY));
+            // Keep within bounds (accounting for cat size of 96px)
+            newX = Math.max(0, Math.min(containerSize.width - catSize, newX));
+            newY = Math.max(0, Math.min(containerSize.height - catSize, newY));
 
             // Random chance to stop moving
             if (Math.random() > 0.998) {
@@ -108,8 +110,8 @@ const CatPlayground = () => {
             // Random chance to start moving
             if (Math.random() > 0.998) {
               newIsMoving = true;
-              newTargetX = Math.random() * containerSize.width;
-              newTargetY = Math.random() * containerSize.height;
+              newTargetX = Math.random() * Math.max(0, containerSize.width - catSize);
+              newTargetY = Math.random() * Math.max(0, containerSize.height - catSize);
               newDirection = newTargetX > cat.x ? 1 : -1;
             }
           }
@@ -223,7 +225,11 @@ const CatPlayground = () => {
         </h1>
       </div>
 
-      <div id="cat-area" ref={catAreaRef} className="fixed bottom-0 left-0 right-0 z-50 h-40">
+      <div
+        id="cat-area"
+        ref={catAreaRef}
+        className="fixed bottom-0 left-0 right-0 z-50 h-48 bg-gradient-to-t from-black/10 to-transparent"
+      >
         {cats.map(cat => (
           <div
             key={cat.id}
