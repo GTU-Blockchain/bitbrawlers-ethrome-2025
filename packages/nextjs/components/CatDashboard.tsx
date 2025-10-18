@@ -109,7 +109,7 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
 
   const getCatImage = (color: string, clothed: boolean) => {
     const clothedPath = clothed ? "clothed" : "normal";
-    return `/cats/${color}/${clothedPath}/Sitting ${color.charAt(0).toUpperCase() + color.slice(1)} Cat.gif`;
+    return `/cats/${color}/${clothedPath}/${color}-sitting.gif`;
   };
 
   const getStatIcon = (statName: string) => {

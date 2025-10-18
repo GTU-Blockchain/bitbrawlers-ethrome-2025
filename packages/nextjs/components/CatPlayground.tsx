@@ -23,7 +23,7 @@ interface Cat {
   };
 }
 
-const CAT_COLORS = ["black", "grey", "pink", "siamese", "yellow"];
+const CAT_COLORS = ["black", "grey", "pinkie", "siamese", "yellow"];
 const CAT_COUNT = 5;
 
 const CatPlayground = () => {
@@ -82,7 +82,7 @@ const CatPlayground = () => {
         speed: 0.5 + Math.random() * 1.0, // Speed between 0.5 and 1.5
         isMoving: Math.random() > 0.3, // 70% chance to start moving
         color: CAT_COLORS[i], // Use each color once
-        isClothed: Math.random() > 0.5, // Random clothing
+        isClothed: false, // Always use normal cats, never clothed
         stats: generateStats(),
       });
     }
@@ -177,67 +177,11 @@ const CatPlayground = () => {
     const clothed = cat.isClothed ? "clothed" : "normal";
 
     if (cat.isMoving) {
-      // Use running animation when moving
-      if (clothed === "clothed") {
-        switch (color) {
-          case "pink":
-            return `/cats/${color}/${clothed}/pink corriendo - ropa.gif`;
-          case "grey":
-            return `/cats/${color}/${clothed}/Running-Clothed--Grey.gif`;
-          case "siamese":
-            return `/cats/${color}/${clothed}/Corriendo Ropa Siames.gif`;
-          case "yellow":
-            return `/cats/${color}/${clothed}/Running-Hat-Yellow.gif`;
-          case "black":
-          default:
-            return `/cats/${color}/${clothed}/Running-Hat-Black.gif`;
-        }
-      } else {
-        switch (color) {
-          case "pink":
-            return `/cats/${color}/${clothed}/Running Pinkie.gif`;
-          case "siamese":
-            return `/cats/${color}/${clothed}/Licking Siamese.gif`;
-          case "yellow":
-            return `/cats/${color}/${clothed}/Running Yellow Cat.gif`;
-          case "grey":
-            return `/cats/${color}/${clothed}/Licking Grey Cat.gif`;
-          case "black":
-          default:
-            return `/cats/${color}/${clothed}/Licking Black Cat-export.gif`;
-        }
-      }
+      // Use walking animation when moving
+      return `/cats/${color}/${clothed}/${color}-walking.gif`;
     } else {
-      // Use idle animation when not moving
-      if (clothed === "clothed") {
-        switch (color) {
-          case "pink":
-            return `/cats/${color}/${clothed}/pink sentado - ropa.gif`;
-          case "grey":
-            return `/cats/${color}/${clothed}/Sitting-Clothed-Grey.gif`;
-          case "siamese":
-            return `/cats/${color}/${clothed}/SENTADO ROPA Siamese (1).gif`;
-          case "yellow":
-            return `/cats/${color}/${clothed}/Sitting-Hat-Yellow.gif`;
-          case "black":
-          default:
-            return `/cats/${color}/${clothed}/Idle-Hat-Black.gif`;
-        }
-      } else {
-        switch (color) {
-          case "pink":
-            return `/cats/${color}/${clothed}/Sitting Pinkie.gif`;
-          case "siamese":
-            return `/cats/${color}/${clothed}/Sitting Siamese.gif`;
-          case "yellow":
-            return `/cats/${color}/${clothed}/Sitting Yellow Cat.gif`;
-          case "grey":
-            return `/cats/${color}/${clothed}/Sitting Grey Cat.gif`;
-          case "black":
-          default:
-            return `/cats/${color}/${clothed}/Sitting Black Cat.gif`;
-        }
-      }
+      // Use sitting animation when idle
+      return `/cats/${color}/${clothed}/${color}-sitting.gif`;
     }
   };
 
