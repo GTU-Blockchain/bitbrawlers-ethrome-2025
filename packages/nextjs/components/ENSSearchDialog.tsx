@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { ENSSearchBar } from "./searchBar";
 import { Address } from "viem";
 
@@ -96,7 +97,13 @@ export const ENSSearchDialog = () => {
                   <div key={`${result.address}-${index}`} className="result-item">
                     <div className="result-content">
                       {result.avatar && (
-                        <img src={result.avatar} alt="Player Avatar" className="player-avatar" width="32" height="32" />
+                        <Image
+                          src={result.avatar}
+                          alt="Player Avatar"
+                          className="player-avatar rounded-full"
+                          width={32}
+                          height={32}
+                        />
                       )}
                       <div className="player-info">
                         <div className="player-name">{result.name}</div>
@@ -219,12 +226,11 @@ export const ENSSearchDialog = () => {
         }
 
         .player-address {
-          font-family: monospace;
+          font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
           font-size: 0.7rem;
           color: #666;
           word-break: break-all;
         }
-
         .player-actions {
           display: flex;
           gap: 5px;

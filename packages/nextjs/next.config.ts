@@ -24,6 +24,16 @@ if (isIpfs) {
   nextConfig.images = {
     unoptimized: true,
   };
+} else {
+  // Configure image domains for ENS avatars and other external images
+  nextConfig.images = {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  };
 }
 
 module.exports = nextConfig;

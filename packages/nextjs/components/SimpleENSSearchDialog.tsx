@@ -245,7 +245,7 @@ export const SimpleENSSearchDialog = () => {
         }
 
         .player-address {
-          font-family: monospace;
+          font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
           font-size: 0.9rem;
           color: #666;
           word-break: break-all;
