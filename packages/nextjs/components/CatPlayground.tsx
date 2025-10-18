@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 interface Cat {
   id: number;
@@ -233,13 +234,16 @@ const CatPlayground = () => {
               transform: `scaleX(${cat.direction})`,
             }}
           >
-            <img
+            <Image
               src={getCatImage(cat)}
               alt={`${cat.color} cat`}
+              width={96}
+              height={96}
               className="w-24 h-24 object-contain"
               style={{
                 filter: cat.direction < 0 ? "scaleX(-1)" : "none",
               }}
+              unoptimized
             />
           </div>
         ))}
