@@ -44,7 +44,7 @@ const CatPlayground = () => {
   const [containerSize, setContainerSize] = useState({ width: 1200, height: 600 });
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string>("");
-  const [nextCatId, setNextCatId] = useState(CAT_COUNT);
+  const [nextCatId, setNextCatId] = useState(0);
   const catAreaRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
 
@@ -234,7 +234,7 @@ const CatPlayground = () => {
       console.log("Mock logic to keep state variables used:", nextCatId, catData);
     }
     // Increment the ID counter for the *next* potential cat unlock
-    setNextCatId(prevId => prevId + 1);
+    setNextCatId((prevId: number) => prevId + 1);
   };
 
   // NEW useEffect to call handleUnlockCat once, satisfying the linter.
