@@ -48,7 +48,7 @@ export const SimpleENSSearchDialog = () => {
   return (
     <>
       {/* NES.css Dialog Button */}
-      <button className="nes-btn is-primary" onClick={openDialog}>
+      <button className="nes-btn is-primary find-players-button" onClick={openDialog}>
         Find Players
       </button>
 
@@ -287,6 +287,33 @@ export const SimpleENSSearchDialog = () => {
           .player-actions .nes-btn {
             flex: 1;
           }
+        }
+
+        .find-players-button {
+          border: 3px solid #333 !important;
+          background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+          color: white !important;
+          box-shadow:
+            3px 3px 0px #333,
+            6px 6px 0px #666;
+          font-weight: bold;
+          text-shadow: 1px 1px 0px #000;
+          transition: all 0.2s ease;
+        }
+
+        .find-players-button:hover {
+          background: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
+          transform: translate(1px, 1px);
+          box-shadow:
+            2px 2px 0px #333,
+            4px 4px 0px #666;
+        }
+
+        .find-players-button:active {
+          transform: translate(2px, 2px);
+          box-shadow:
+            1px 1px 0px #333,
+            2px 2px 0px #666;
         }
       `}</style>
     </>

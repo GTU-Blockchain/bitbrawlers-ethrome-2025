@@ -206,16 +206,16 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
 
             {/* Buttons */}
             <div className="actions-section">
-              <button className="nes-btn is-primary" onClick={() => setShowShop(true)}>
+              <button className="nes-btn is-primary custom-button shop-button" onClick={() => setShowShop(true)}>
                 Shop
               </button>
-              <button className="nes-btn is-warning" onClick={handleSetDefault}>
+              <button className="nes-btn is-warning custom-button warning-button" onClick={handleSetDefault}>
                 Set Default
               </button>
             </div>
 
             <div className="dialog-menu">
-              <button type="button" className="nes-btn" onClick={onClose}>
+              <button type="button" className="nes-btn custom-button close-dialog-button" onClick={onClose}>
                 Close
               </button>
             </div>
@@ -355,6 +355,62 @@ export const CatDashboard = ({ cat, onClose }: CatDashboardProps) => {
 
             button {
               cursor: pointer;
+            }
+
+            .custom-button {
+              border: 3px solid #333 !important;
+              box-shadow:
+                3px 3px 0px #333,
+                6px 6px 0px #666;
+              font-weight: bold;
+              text-shadow: 1px 1px 0px #000;
+              transition: all 0.2s ease;
+            }
+
+            .shop-button {
+              background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important;
+              color: white !important;
+            }
+
+            .shop-button:hover {
+              background: linear-gradient(135deg, #2980b9 0%, #1f618d 100%) !important;
+              transform: translate(1px, 1px);
+              box-shadow:
+                2px 2px 0px #333,
+                4px 4px 0px #666;
+            }
+
+            .warning-button {
+              background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
+              color: white !important;
+            }
+
+            .warning-button:hover {
+              background: linear-gradient(135deg, #e67e22 0%, #d35400 100%) !important;
+              transform: translate(1px, 1px);
+              box-shadow:
+                2px 2px 0px #333,
+                4px 4px 0px #666;
+            }
+
+            .close-dialog-button {
+              background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
+              color: white !important;
+            }
+
+            .close-dialog-button:hover {
+              background: linear-gradient(135deg, #7f8c8d 0%, #6c7b7d 100%) !important;
+              transform: translate(1px, 1px);
+              box-shadow:
+                2px 2px 0px #333,
+                4px 4px 0px #666;
+            }
+
+            .custom-button:active {
+              transform: translate(2px, 2px);
+              box-shadow:
+                1px 1px 0px #333,
+                2px 2px 0px #666;
             }
           `}</style>
         </dialog>

@@ -34,11 +34,49 @@ const CatPlayground = () => {
   const catAreaRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
 
-  // Select random background on mount
+  // Load background from localStorage or select random background on mount
   useEffect(() => {
-    const randomBackground = Math.floor(Math.random() * 10); // 0-9 for background-0.png to background-9.png
-    setBackgroundImage(`/backgrounds/background-${randomBackground}.png`);
+    const savedBackground = localStorage.getItem("selectedBackground");
+    if (savedBackground) {
+      // Map background ID to image path
+      const backgroundImagePath = `/backgrounds/background-${savedBackground.replace("bg-", "")}.png`;
+      setBackgroundImage(backgroundImagePath);
+    } else {
+      // Fallback to random background if no saved background
+      const randomBackground = Math.floor(Math.random() * 10); // 0-9 for background-0.png to background-9.png
+      setBackgroundImage(`/backgrounds/background-${randomBackground}.png`);
+    }
   }, []);
+
+  // Listen for background changes from BackgroundStore
+  useEffect(() => {
+    const handleBackgroundChange = () => {
+      const savedBackground = localStorage.getItem("selectedBackground");
+      if (savedBackground) {
+        const backgroundImagePath = `/backgrounds/background-${savedBackground.replace("bg-", "")}.png`;
+        setBackgroundImage(backgroundImagePath);
+      }
+    };
+
+    // Listen for custom event from BackgroundStore
+    window.addEventListener("backgroundChanged", handleBackgroundChange);
+
+    // Also check localStorage periodically (fallback)
+    const interval = setInterval(() => {
+      const savedBackground = localStorage.getItem("selectedBackground");
+      if (savedBackground) {
+        const backgroundImagePath = `/backgrounds/background-${savedBackground.replace("bg-", "")}.png`;
+        if (backgroundImagePath !== backgroundImage) {
+          setBackgroundImage(backgroundImagePath);
+        }
+      }
+    }, 1000);
+
+    return () => {
+      window.removeEventListener("backgroundChanged", handleBackgroundChange);
+      clearInterval(interval);
+    };
+  }, [backgroundImage]);
 
   // Update container size on resize - using cat-area dimensions
   useEffect(() => {
