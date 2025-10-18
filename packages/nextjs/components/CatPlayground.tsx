@@ -3,6 +3,26 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import CatDashboard from "./CatDashboard";
+import { useAccount } from "wagmi";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+
+interface CatMetadata {
+  // Contract data
+  tokenId: number;
+  name: string;
+  ensDomain: string;
+  level: number;
+  battlesWon: number;
+  battlesLost: number;
+  createdAt: number;
+  // Stats from contract
+  attack: number;
+  defence: number;
+  speed: number;
+  health: number;
+  color: number;
+  isClothed: boolean;
+}
 
 interface Cat {
   id: number;
@@ -13,26 +33,29 @@ interface Cat {
   direction: number; // 1 for right, -1 for left
   speed: number;
   isMoving: boolean;
-  color: string;
-  isClothed: boolean;
-  stats: {
-    attack: number;
-    defence: number;
-    speed: number;
-    health: number;
-  };
+  metadata: CatMetadata;
 }
 
-const CAT_COLORS = ["black", "grey", "pinkie", "siamese", "yellow"];
-const CAT_COUNT = 5;
+const COLOR_MAP = ["black", "grey", "pink", "siamese", "yellow"];
 
 const CatPlayground = () => {
+  const { address } = useAccount();
   const [cats, setCats] = useState<Cat[]>([]);
   const [containerSize, setContainerSize] = useState({ width: 1200, height: 600 });
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string>("");
   const catAreaRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
+
+  // Get all cats with complete data for the user
+  const { data: allCatsData } = useScaffoldReadContract({
+    contractName: "BitBrawlers",
+    functionName: "getAllCatsWithData",
+    args: address ? [address] : ["0x0000000000000000000000000000000000000000"],
+    query: {
+      enabled: !!address,
+    },
+  });
 
   // Select random background on mount
   useEffect(() => {
@@ -54,40 +77,65 @@ const CatPlayground = () => {
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-  // Initialize cats
+  // Initialize cats from contract data
   useEffect(() => {
+    if (!address || !allCatsData || !Array.isArray(allCatsData) || allCatsData.length < 3) {
+      setCats([]);
+      return;
+    }
+
+    const [tokenIds, statsArray, metadataArray] = allCatsData;
+
+    if (!tokenIds || !statsArray || !metadataArray || tokenIds.length === 0) {
+      setCats([]);
+      return;
+    }
+
     const initialCats: Cat[] = [];
     const catSize = 96;
-    for (let i = 0; i < CAT_COUNT; i++) {
+
+    // Process each pet data from contract
+    for (let index = 0; index < tokenIds.length; index++) {
+      const tokenId = tokenIds[index];
+      const stats = statsArray[index];
+      const metadata = metadataArray[index];
+
       const startX = Math.random() * Math.max(0, containerSize.width - catSize);
       const startY = Math.random() * Math.max(0, containerSize.height - catSize);
       const targetX = Math.random() * Math.max(0, containerSize.width - catSize);
       const targetY = Math.random() * Math.max(0, containerSize.height - catSize);
 
-      // Generate random stats for each cat
-      const generateStats = () => ({
-        attack: Math.floor(Math.random() * 40) + 30, // 30-70
-        defence: Math.floor(Math.random() * 40) + 30, // 30-70
-        speed: Math.floor(Math.random() * 40) + 30, // 30-70
-        health: Math.floor(Math.random() * 40) + 30, // 30-70
-      });
-
-      initialCats.push({
-        id: i,
+      const cat: Cat = {
+        id: index,
         x: startX,
         y: startY,
         targetX: targetX,
         targetY: targetY,
         direction: targetX > startX ? 1 : -1,
-        speed: 0.5 + Math.random() * 1.0, // Speed between 0.5 and 1.5
-        isMoving: Math.random() > 0.3, // 70% chance to start moving
-        color: CAT_COLORS[i], // Use each color once
-        isClothed: false, // Always use normal cats, never clothed
-        stats: generateStats(),
-      });
+        speed: 0.5 + Math.random() * 1.0,
+        isMoving: Math.random() > 0.3,
+        metadata: {
+          tokenId: Number(tokenId),
+          name: metadata.name,
+          ensDomain: metadata.ensDomain,
+          level: Number(stats.level),
+          battlesWon: Number(metadata.battlesWon),
+          battlesLost: Number(metadata.battlesLost),
+          createdAt: Number(metadata.createdAt),
+          attack: Number(stats.attack),
+          defence: Number(stats.defense),
+          speed: Number(stats.speed),
+          health: Number(stats.health),
+          color: Number(stats.color),
+          isClothed: stats.isClothed,
+        },
+      };
+
+      initialCats.push(cat);
     }
+
     setCats(initialCats);
-  }, [containerSize]);
+  }, [address, allCatsData, containerSize]);
 
   // Animation loop
   useEffect(() => {
@@ -173,8 +221,8 @@ const CatPlayground = () => {
   };
 
   const getCatImage = (cat: Cat) => {
-    const color = cat.color;
-    const clothed = cat.isClothed ? "clothed" : "normal";
+    const color = COLOR_MAP[cat.metadata.color] || "black";
+    const clothed = cat.metadata.isClothed ? "clothed" : "normal";
 
     if (cat.isMoving) {
       // Use walking animation when moving
@@ -216,11 +264,11 @@ const CatPlayground = () => {
               transform: `scaleX(${cat.direction})`,
             }}
             onClick={() => handleCatClick(cat)}
-            title={`Click to view ${cat.color} cat stats`}
+            title={`Click to view ${COLOR_MAP[cat.metadata.color]} cat stats`}
           >
             <Image
               src={getCatImage(cat)}
-              alt={`${cat.color} cat`}
+              alt={`${COLOR_MAP[cat.metadata.color]} cat`}
               width={106}
               height={108}
               className="w-27 h-27 object-contain"
@@ -233,8 +281,92 @@ const CatPlayground = () => {
         ))}
       </div>
 
-      {/* Cat Dashboard */}
-      <CatDashboard cat={selectedCat} onClose={closeDashboard} />
+      {/* Cat Dashboard or No Cats Message */}
+      {!address ? (
+        <div className="no-cats-message">
+          <div className="no-cats-content">
+            <h2>🔗 Connect your wallet</h2>
+            <p>Connect your wallet to see your cats!</p>
+          </div>
+          <style jsx>{`
+            .no-cats-message {
+              position: fixed;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              z-index: 100;
+              background: #ffffff;
+              border: 4px solid #333;
+              box-shadow:
+                4px 4px 0px #333,
+                8px 8px 0px #666;
+              padding: 40px;
+              text-align: center;
+              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
+              max-width: 500px;
+              width: 90vw;
+            }
+
+            .no-cats-content h2 {
+              color: #333;
+              margin-bottom: 16px;
+              font-size: 1.5rem;
+              text-shadow: 1px 1px 0px #666;
+            }
+
+            .no-cats-content p {
+              color: #666;
+              margin-bottom: 24px;
+              font-size: 1rem;
+            }
+          `}</style>
+        </div>
+      ) : cats.length === 0 ? (
+        <div className="no-cats-message">
+          <div className="no-cats-content">
+            <h2 className="text-2xl font-bold">😿 Unfortunately you have no cats :/</h2>
+            <p>Mint your first cat to start playing!</p>
+          </div>
+          <style jsx>{`
+            .no-cats-message {
+              position: fixed;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              z-index: 100;
+              background: #ffffff;
+              border: 4px solid #333;
+              box-shadow:
+                4px 4px 0px #333,
+                8px 8px 0px #666;
+              padding: 40px;
+              text-align: center;
+              font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
+              max-width: 500px;
+              width: 90vw;
+            }
+
+            .no-cats-content h2 {
+              color: #333;
+              margin-bottom: 16px;
+              font-size: 1.5rem;
+              text-shadow: 1px 1px 0px #666;
+            }
+
+            .no-cats-content p {
+              color: #666;
+              margin-bottom: 24px;
+              font-size: 1rem;
+            }
+
+            .nes-btn {
+              cursor: pointer;
+            }
+          `}</style>
+        </div>
+      ) : (
+        <CatDashboard cat={selectedCat} onClose={closeDashboard} />
+      )}
     </div>
   );
 };
