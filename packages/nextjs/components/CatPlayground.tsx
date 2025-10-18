@@ -21,14 +21,14 @@ const CAT_COUNT = 12;
 const CatPlayground = () => {
   const [cats, setCats] = useState<Cat[]>([]);
   const [containerSize, setContainerSize] = useState({ width: 1200, height: 600 });
-  const playgroundRef = useRef<HTMLDivElement>(null);
+  const catAreaRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
 
-  // Update container size on resize
+  // Update container size on resize - using cat-area dimensions
   useEffect(() => {
     const updateSize = () => {
-      if (playgroundRef.current) {
-        const rect = playgroundRef.current.getBoundingClientRect();
+      if (catAreaRef.current) {
+        const rect = catAreaRef.current.getBoundingClientRect();
         setContainerSize({ width: rect.width, height: rect.height });
       }
     };
@@ -162,14 +162,14 @@ const CatPlayground = () => {
           case "pink":
             return `/cats/${color}/${clothed}/Running Pinkie.gif`;
           case "siamese":
-            return `/cats/${color}/${clothed}/Running Siamese.png`;
+            return `/cats/${color}/${clothed}/Licking Siamese.gif`;
           case "yellow":
             return `/cats/${color}/${clothed}/Running Yellow Cat.gif`;
           case "grey":
-            return `/cats/${color}/${clothed}/Running Grey Cat.png`;
+            return `/cats/${color}/${clothed}/Licking Grey Cat.gif`;
           case "black":
           default:
-            return `/cats/${color}/${clothed}/Running Black Cat.png`;
+            return `/cats/${color}/${clothed}/Licking Black Cat-export.gif`;
         }
       }
     } else {
@@ -222,7 +222,7 @@ const CatPlayground = () => {
         </h1>
       </div>
 
-      <div ref={playgroundRef} className="absolute inset-0 w-full h-full" style={{ minHeight: "100vh" }}>
+      <div id="cat-area" ref={catAreaRef} className="fixed bottom-0 left-0 right-0 z-50 h-40">
         {cats.map(cat => (
           <div
             key={cat.id}
