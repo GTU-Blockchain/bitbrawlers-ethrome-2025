@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useDebounceValue } from "usehooks-ts";
 import { Address, isAddress } from "viem";
 import { normalize } from "viem/ens";
@@ -64,12 +65,13 @@ export const ENSSearchBar = ({
     },
   });
 
-  // Get ENS avatar
+  // Get ENS avatar - fetch for both resolved ensName and direct ENS input
+  const avatarName = ensName || (isEnsName ? debouncedValue : undefined);
   const { data: ensAvatar, isLoading: isEnsAvatarLoading } = useEnsAvatar({
-    name: ensName ? normalize(ensName) : undefined,
+    name: avatarName ? normalize(avatarName) : undefined,
     chainId: 1,
     query: {
-      enabled: Boolean(ensName),
+      enabled: Boolean(avatarName),
       gcTime: 30_000,
     },
   });
@@ -156,7 +158,13 @@ export const ENSSearchBar = ({
         <div className="search-result nes-container is-rounded">
           <div className="result-content">
             {searchResult.avatar && (
-              <img src={searchResult.avatar} alt="ENS Avatar" className="ens-avatar" width="32" height="32" />
+              <Image
+                src={searchResult.avatar}
+                alt="ENS Avatar"
+                className="ens-avatar rounded-full"
+                width={32}
+                height={32}
+              />
             )}
             <div className="result-info">
               <div className="ens-name">{searchResult.name}</div>
