@@ -273,12 +273,12 @@ const CatPlayground = () => {
           /* Use a large font size and bold weight */
           font-size: 4rem;
           font-weight: bold;
-          color: #e91e63; /* Cute Pink/Red */
+          color: #fff; /* Cute Pink/Red */
 
           /* Pixel-style shadow for retro depth */
           text-shadow:
-            4px 4px 0 #9c27b0,
-            /* Darker pixel shadow */ 8px 8px 0 #4a148c; /* Deeper shadow layer */
+            4px 4px 0 #000,
+            /* Darker pixel shadow */ 8px 8px 0 #000; /* Deeper shadow layer */
 
           /* Ensure the text is high quality */
           font-family: var(--font-pixelify-sans), "Courier New", monospace, sans-serif;
