@@ -2,8 +2,11 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import { VSChallengeAnimation } from "./VSChallengeAnimation";
+// NOTE: Assuming ENSSearchBar is defined in './searchBar'
 import { ENSSearchBar } from "./searchBar";
 import { Address } from "viem";
+import { useAccount } from "wagmi";
 
 interface ENSSearchResult {
   address?: Address;
@@ -13,9 +16,43 @@ interface ENSSearchResult {
   error?: string;
 }
 
+interface CatStats {
+  attack: number;
+  defence: number;
+  speed: number;
+  health: number;
+}
+
+interface Player {
+  address: Address;
+  name: string;
+  avatar?: string;
+  catColor: string;
+  catName: string;
+  stats: CatStats;
+}
+
 export const SimpleENSSearchDialog = () => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [searchResults, setSearchResults] = useState<ENSSearchResult[]>([]);
+  const [showChallenge, setShowChallenge] = useState(false);
+  const [challenger, setChallenger] = useState<Player | null>(null);
+  const [opponent, setOpponent] = useState<Player | null>(null);
+  const { address, isConnected } = useAccount();
+
+  // Current user data - uses connected wallet address
+  const currentUser: Player = {
+    address: address || ("0x0000000000000000000000000000000000000000" as Address),
+    name: "You",
+    catColor: "grey",
+    catName: "Whiskers",
+    stats: {
+      attack: 45,
+      defence: 50,
+      speed: 55,
+      health: 60,
+    },
+  };
 
   const openDialog = () => {
     if (dialogRef.current) {
@@ -45,8 +82,64 @@ export const SimpleENSSearchDialog = () => {
     setSearchResults([]);
   };
 
+  const handleChallengePlayer = (player: ENSSearchResult) => {
+    if (!isConnected) {
+      alert("Please connect your wallet to challenge players!");
+      return;
+    }
+
+    if (player.address && player.name) {
+      // --- START: Challenge logic (unchanged from your request) ---
+      // Create opponent player data with mock stats
+      const opponentPlayer: Player = {
+        address: player.address,
+        name: player.name,
+        avatar: player.avatar,
+        catColor: "black", // Mock color - in real app this would come from blockchain
+        catName: `${player.name}'s Cat`, // Mock name
+        stats: {
+          attack: Math.floor(Math.random() * 40) + 30,
+          defence: Math.floor(Math.random() * 40) + 30,
+          speed: Math.floor(Math.random() * 40) + 30,
+          health: Math.floor(Math.random() * 40) + 30,
+        },
+      };
+
+      setChallenger(currentUser);
+      setOpponent(opponentPlayer);
+      closeDialog(); // Close the search dialog before starting the animation
+      setShowChallenge(true);
+      // --- END: Challenge logic ---
+    }
+  };
+
+  const handleChallengeComplete = (winner: Player) => {
+    console.log("Challenge completed! Winner:", winner);
+    setShowChallenge(false);
+    setChallenger(null);
+    setOpponent(null);
+    // You might want to re-open the dialog here if the user should continue searching
+  };
+
+  const handleChallengeClose = () => {
+    setShowChallenge(false);
+    setChallenger(null);
+    setOpponent(null);
+    // You might want to re-open the dialog here
+  };
+
   return (
     <>
+      {/* VS Challenge Animation - FIX: Ensure player2 is passed */}
+      {showChallenge && challenger && opponent && (
+        <VSChallengeAnimation
+          player1={challenger}
+          player2={opponent} // This line was fixed/uncommented
+          onComplete={handleChallengeComplete}
+          onClose={handleChallengeClose}
+        />
+      )}
+
       {/* NES.css Dialog Button */}
       <button type="button" className="nes-btn is-primary" onClick={openDialog}>
         Find Players
@@ -59,6 +152,11 @@ export const SimpleENSSearchDialog = () => {
             <div className="search-section">
               <h2 className="search-title">Find Cat Players by ENS</h2>
               <p className="search-description">Search for other players using their ENS name or Ethereum address</p>
+              {!isConnected && (
+                <div className="wallet-warning">
+                  <p className="warning-text">⚠️ Please connect your wallet to challenge players</p>
+                </div>
+              )}
 
               <ENSSearchBar
                 onSearchResult={handleSearchResult}
@@ -84,6 +182,7 @@ export const SimpleENSSearchDialog = () => {
                           <Image
                             src={result.avatar}
                             alt="Player Avatar"
+                            // Styles for avatar and text are preserved as requested
                             className="player-avatar rounded-full"
                             width={40}
                             height={40}
@@ -103,10 +202,14 @@ export const SimpleENSSearchDialog = () => {
                           </button>
                           <button
                             type="button"
-                            className="nes-btn is-success"
-                            onClick={() => console.log("Challenge player:", result)}
+                            className={`nes-btn ${isConnected ? "is-success" : "is-disabled"}`}
+                            onClick={() => isConnected && handleChallengePlayer(result)}
+                            disabled={!isConnected}
+                            title={
+                              !isConnected ? "Please connect your wallet to challenge players" : "Challenge this player"
+                            }
                           >
-                            Challenge
+                            {isConnected ? "Challenge" : "Connect Wallet"}
                           </button>
                         </div>
                       </div>
@@ -179,6 +282,22 @@ export const SimpleENSSearchDialog = () => {
         .search-description {
           color: #666;
           margin-bottom: 20px;
+        }
+
+        .wallet-warning {
+          background-color: #fff3cd;
+          border: 2px solid #ffc107;
+          border-radius: 8px;
+          padding: 10px;
+          margin-bottom: 20px;
+          text-align: center;
+        }
+
+        .warning-text {
+          color: #856404;
+          margin: 0;
+          font-weight: bold;
+          font-size: 0.9rem;
         }
 
         .search-bar-wrapper {
@@ -260,6 +379,18 @@ export const SimpleENSSearchDialog = () => {
         .player-actions .nes-btn {
           font-size: 0.8rem;
           padding: 5px 10px;
+        }
+
+        .player-actions .nes-btn.is-disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          background-color: #ccc;
+          color: #666;
+        }
+
+        .player-actions .nes-btn.is-disabled:hover {
+          background-color: #ccc;
+          color: #666;
         }
 
         .dialog-menu {
