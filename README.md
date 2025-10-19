@@ -1,5 +1,8 @@
 # BitBrawlers
 
+YouTube: https://youtu.be/kiljAVwpALQ
+
+
 BitBrawlers is an innovative blockchain-based pet battle game built on Polkadot's Moonbase Alpha testnet, showcasing the power of Web3 gaming and cross-chain compatibility. Players can mint unique NFT cats as ERC721 tokens, each with distinct attributes including attack, defense, speed, and health stats. The game features ENS integration, allowing players to give custom names to their pets through Ethereum Name Service subdomains, creating personalized and memorable gaming experiences.
 
 
