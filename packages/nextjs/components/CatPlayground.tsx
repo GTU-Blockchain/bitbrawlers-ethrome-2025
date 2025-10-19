@@ -36,7 +36,7 @@ interface Cat {
   metadata: CatMetadata;
 }
 
-const COLOR_MAP = ["black", "grey", "pink", "siamese", "yellow"];
+const COLOR_MAP = ["black", "grey", "pinkie", "siamese", "yellow"];
 // const CAT_COUNT = 0; // Initial cat count
 
 const CatPlayground = () => {
@@ -45,12 +45,15 @@ const CatPlayground = () => {
   const [containerSize, setContainerSize] = useState({ width: 1200, height: 600 });
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string>("");
-  const [nextCatId, setNextCatId] = useState(0);
   const catAreaRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
 
   // Get all cats with complete data for the user
-  const { data: allCatsData } = useScaffoldReadContract({
+  const {
+    data: allCatsData,
+    isLoading,
+    error,
+  } = useScaffoldReadContract({
     contractName: "BitBrawlers",
     functionName: "getAllCatsWithData",
     args: address ? [address] : ["0x0000000000000000000000000000000000000000"],
@@ -81,7 +84,33 @@ const CatPlayground = () => {
 
   // Initialize cats from contract data
   useEffect(() => {
-    if (!address || !allCatsData || !Array.isArray(allCatsData) || allCatsData.length < 3) {
+    if (!address) {
+      setCats([]);
+      return;
+    }
+
+    if (isLoading) {
+      return;
+    }
+
+    if (error) {
+      console.error("Error loading cat data:", error);
+      setCats([]);
+      return;
+    }
+
+    if (!allCatsData) {
+      setCats([]);
+      return;
+    }
+
+    if (!Array.isArray(allCatsData)) {
+      console.error("allCatsData is not an array:", typeof allCatsData);
+      setCats([]);
+      return;
+    }
+
+    if (allCatsData.length < 1) {
       setCats([]);
       return;
     }
@@ -99,8 +128,8 @@ const CatPlayground = () => {
     // Process each pet data from contract
     for (let index = 0; index < tokenIds.length; index++) {
       const tokenId = tokenIds[index];
-      const stats = statsArray[index];
-      const metadata = metadataArray[index];
+      const stats = statsArray[index] as any;
+      const metadata = metadataArray[index] as any;
 
       const startX = Math.random() * Math.max(0, containerSize.width - catSize);
       const startY = Math.random() * Math.max(0, containerSize.height - catSize);
@@ -137,7 +166,7 @@ const CatPlayground = () => {
     }
 
     setCats(initialCats);
-  }, [address, allCatsData, containerSize]);
+  }, [address, allCatsData, isLoading, error, containerSize]);
 
   // Animation loop
   useEffect(() => {
@@ -221,37 +250,6 @@ const CatPlayground = () => {
   const closeDashboard = () => {
     setSelectedCat(null);
   };
-
-  // KEEPING THE FUNCTION AND ITS SIGNATURE FOR FUTURE DEVELOPMENT
-  const handleUnlockCat = (catData: {
-    color: string;
-    name: string;
-    isClothed: boolean;
-    stats: { attack: number; defence: number; speed: number; health: number };
-  }) => {
-    // Empty body as requested, but we must use the state variables to satisfy the linter
-    // I will use them with a mock operation that doesn't affect the state
-    if (nextCatId === -1) {
-      console.log("Mock logic to keep state variables used:", nextCatId, catData);
-    }
-    // Increment the ID counter for the *next* potential cat unlock
-    setNextCatId((prevId: number) => prevId + 1);
-  };
-
-  // NEW useEffect to call handleUnlockCat once, satisfying the linter.
-  useEffect(() => {
-    // Mock data for the unused call
-    const mockData = {
-      color: "yellow",
-      name: "MockCat",
-      isClothed: false,
-      stats: { attack: 50, defence: 50, speed: 50, health: 50 },
-    };
-    handleUnlockCat(mockData);
-    // The dependency array is empty, but ESLint might warn about 'handleUnlockCat' missing.
-    // We disable the exhaustive-deps rule here because we only want to run it once to fix the lint error.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const getCatImage = (cat: Cat) => {
     const color = COLOR_MAP[cat.metadata.color] || "black";

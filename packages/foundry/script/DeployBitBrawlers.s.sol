@@ -26,8 +26,8 @@ contract DeployBitBrawlers is ScaffoldETHDeploy {
      */
     function run() external ScaffoldEthDeployerRunner {
         BitBrawlers bitBrawlers = new BitBrawlers();
-        
-        // Mint some initial pets for testing
+
+        // Mint initial pets for testing
         _mintInitialPets(bitBrawlers);
     }
 
@@ -38,21 +38,21 @@ contract DeployBitBrawlers is ScaffoldETHDeploy {
         // Mint pets for the deployer
         _contract.mintPet(
             BitBrawlers.PetColor.BLACK,
-            true,
+            false,
             "Shadow Warrior",
             "shadow-warrior.deployer.eth"
         );
-        
+
         _contract.mintPet(
             BitBrawlers.PetColor.PINK,
             false,
             "Pinkie Pie",
             "pinkie-pie.deployer.eth"
         );
-        
+
         _contract.mintPet(
             BitBrawlers.PetColor.YELLOW,
-            true,
+            false,
             "Golden Thunder",
             "golden-thunder.deployer.eth"
         );
