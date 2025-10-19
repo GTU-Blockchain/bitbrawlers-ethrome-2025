@@ -26,9 +26,13 @@ scrollSepolia = "https://sepolia-rpc.scroll.io"
 scroll = "https://rpc.scroll.io"
 pgn = "https://rpc.publicgoods.network"
 pgnTestnet = "https://sepolia.publicgoods.network"
+moonbaseAlpha = "https://rpc.api.moonbase.moonbeam.network"
 
 
 localhost = "http://127.0.0.1:8545"
+
+[profile.chains]
+moonbaseAlpha = 1287
 
 [etherscan]
 polygonMumbai = { key = "${ETHERSCAN_API_KEY}" }

@@ -2,17 +2,21 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useAccount } from "wagmi";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
-interface CatStats {
-  attack: number;
-  defence: number;
-  speed: number;
-  health: number;
-}
+// Contract PetColor enum mapping
+const PET_COLOR_MAP = {
+  black: 0, // BLACK
+  grey: 1, // GREY
+  pinkie: 2, // PINK
+  siamese: 3, // SIAMESE
+  yellow: 4, // YELLOW
+} as const;
 
 interface UnlockCatDialogProps {
   onClose: () => void;
-  onUnlockCat: (catData: { color: string; name: string; isClothed: boolean; stats: CatStats }) => void;
+  onUnlockCat: (tokenId: number) => void; // Return tokenId instead of cat data
 }
 
 const CAT_COLORS = [
@@ -26,6 +30,13 @@ const CAT_COLORS = [
 export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) => {
   const [selectedColor, setSelectedColor] = useState("grey");
   const [catName, setCatName] = useState("");
+  const [isMinting, setIsMinting] = useState(false);
+  const { address } = useAccount();
+
+  // Contract write hook
+  const { writeContractAsync: writeBitBrawlersAsync } = useScaffoldWriteContract({
+    contractName: "BitBrawlers",
+  });
 
   // Placeholder user level - in real app this would come from props or context
   const userLevel = 1;
@@ -40,36 +51,47 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
     return userLevel < requiredLevel;
   };
 
-  const handleUnlock = () => {
+  const handleUnlock = async () => {
     if (!catName.trim()) {
       alert("Please enter a name for your cat!");
       return;
     }
 
-    const catLevel = CAT_COLORS.find(c => c.color === selectedColor)?.level || 999;
-    if (isColorLocked(catLevel)) {
-      alert(`You must be Level ${catLevel} to unlock the ${selectedColor} cat!`);
+    if (!address) {
+      alert("Please connect your wallet first!");
       return;
     }
 
-    // Generate random stats for the new cat
-    const generateStats = () => ({
-      attack: Math.floor(Math.random() * 40) + 30, // 30-70
-      defence: Math.floor(Math.random() * 40) + 30, // 30-70
-      speed: Math.floor(Math.random() * 40) + 30, // 30-70
-      health: Math.floor(Math.random() * 40) + 30, // 30-70
-    });
+    setIsMinting(true);
 
-    const newCatData = {
-      color: selectedColor,
-      name: catName.trim(),
-      isClothed: false, // Always false for new unlocks
-      stats: generateStats(),
-    };
+    try {
+      // Call mintPet function on contract
+      const result = await writeBitBrawlersAsync({
+        functionName: "mintPet",
+        args: [
+          PET_COLOR_MAP[selectedColor as keyof typeof PET_COLOR_MAP], // PetColor enum
+          false, // isClothed - always false for new unlocks
+          catName.trim(), // name
+          "", // ensDomain - empty for now
+        ],
+      });
 
-    onUnlockCat(newCatData);
-    alert(`Congratulations! You've unlocked ${catName}!`);
-    onClose();
+      console.log("Mint transaction result:", result);
+
+      // The mintPet function returns the tokenId directly
+      const tokenId = Number(result);
+
+      alert(`Congratulations! You've minted ${catName} (Token ID: ${tokenId})!`);
+
+      // Call the callback with the tokenId
+      onUnlockCat(tokenId);
+      onClose();
+    } catch (error) {
+      console.error("Error minting cat:", error);
+      alert("Failed to mint cat. Please try again.");
+    } finally {
+      setIsMinting(false);
+    }
   };
 
   return (
@@ -135,11 +157,12 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
         {/* Action Buttons */}
         <div className="dialog-actions">
           <button
-            className={`nes-btn is-success cursor-pointer ${isColorLocked(CAT_COLORS.find(c => c.color === selectedColor)?.level || 999) ? "is-disabled cursor-not-allowed" : ""}`}
+            type="button"
+            className="nes-btn is-success"
             onClick={handleUnlock}
-            disabled={isColorLocked(CAT_COLORS.find(c => c.color === selectedColor)?.level || 999)}
+            disabled={!catName.trim() || isMinting}
           >
-            Unlock Cat
+            {isMinting ? "Minting..." : "Unlock Cat"}
           </button>
           <button className="nes-btn cursor-pointer" onClick={onClose}>
             Cancel

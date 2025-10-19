@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 
-const COLOR_MAP = ["black", "grey", "pink", "siamese", "yellow"];
+const COLOR_MAP = ["black", "grey", "pinkie", "siamese", "yellow"];
 
 interface CatMetadata {
   // Contract data

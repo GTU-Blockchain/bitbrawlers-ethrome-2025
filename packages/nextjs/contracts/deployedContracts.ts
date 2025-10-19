@@ -5,6 +5,123 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
+  1287: {
+    BitBrawlers: {
+      address: "0x082abd8f4b04ecfe6ed7ffe1515659a0bd9f8750",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "mintPet",
+          inputs: [
+            { name: "_color", type: "uint8", internalType: "enum BitBrawlers.PetColor" },
+            { name: "_isClothed", type: "bool", internalType: "bool" },
+            { name: "_name", type: "string", internalType: "string" },
+            { name: "_ensDomain", type: "string", internalType: "string" },
+          ],
+          outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getAllCatsWithData",
+          inputs: [{ name: "_owner", type: "address", internalType: "address" }],
+          outputs: [
+            { name: "tokenIds", type: "uint256[]", internalType: "uint256[]" },
+            {
+              name: "stats",
+              type: "tuple[]",
+              internalType: "struct BitBrawlers.PetStats[]",
+              components: [
+                { name: "attack", type: "uint256", internalType: "uint256" },
+                { name: "defense", type: "uint256", internalType: "uint256" },
+                { name: "speed", type: "uint256", internalType: "uint256" },
+                { name: "health", type: "uint256", internalType: "uint256" },
+                { name: "level", type: "uint256", internalType: "uint256" },
+                { name: "color", type: "uint8", internalType: "enum BitBrawlers.PetColor" },
+                { name: "isClothed", type: "bool", internalType: "bool" },
+              ],
+            },
+            {
+              name: "metadata",
+              type: "tuple[]",
+              internalType: "struct BitBrawlers.PetMetadata[]",
+              components: [
+                { name: "name", type: "string", internalType: "string" },
+                { name: "ensDomain", type: "string", internalType: "string" },
+                { name: "createdAt", type: "uint256", internalType: "uint256" },
+                { name: "battlesWon", type: "uint256", internalType: "uint256" },
+                { name: "battlesLost", type: "uint256", internalType: "uint256" },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPetInfo",
+          inputs: [{ name: "_tokenId", type: "uint256", internalType: "uint256" }],
+          outputs: [
+            {
+              name: "stats",
+              type: "tuple",
+              internalType: "struct BitBrawlers.PetStats",
+              components: [
+                { name: "attack", type: "uint256", internalType: "uint256" },
+                { name: "defense", type: "uint256", internalType: "uint256" },
+                { name: "speed", type: "uint256", internalType: "uint256" },
+                { name: "health", type: "uint256", internalType: "uint256" },
+                { name: "level", type: "uint256", internalType: "uint256" },
+                { name: "color", type: "uint8", internalType: "enum BitBrawlers.PetColor" },
+                { name: "isClothed", type: "bool", internalType: "bool" },
+              ],
+            },
+            {
+              name: "metadata",
+              type: "tuple",
+              internalType: "struct BitBrawlers.PetMetadata",
+              components: [
+                { name: "name", type: "string", internalType: "string" },
+                { name: "ensDomain", type: "string", internalType: "string" },
+                { name: "createdAt", type: "uint256", internalType: "uint256" },
+                { name: "battlesWon", type: "uint256", internalType: "uint256" },
+                { name: "battlesLost", type: "uint256", internalType: "uint256" },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "ownerOf",
+          inputs: [{ name: "tokenId", type: "uint256", internalType: "uint256" }],
+          outputs: [{ name: "", type: "address", internalType: "address" }],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "tokenURI",
+          inputs: [{ name: "tokenId", type: "uint256", internalType: "uint256" }],
+          outputs: [{ name: "", type: "string", internalType: "string" }],
+          stateMutability: "view",
+        },
+        {
+          type: "event",
+          name: "PetMinted",
+          inputs: [
+            { name: "owner", type: "address", indexed: true },
+            { name: "tokenId", type: "uint256", indexed: true },
+            { name: "color", type: "uint8", indexed: false },
+            { name: "isClothed", type: "bool", indexed: false },
+          ],
+        },
+      ],
+    },
+  },
   31337: {
     YourContract: {
       address: "0xc6b8fbf96cf7bbe45576417ec2163acecfa88ecc",

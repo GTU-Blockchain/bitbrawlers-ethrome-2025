@@ -10,16 +10,11 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 export const Navbar = () => {
   const [showUnlockDialog, setShowUnlockDialog] = useState(false);
 
-  const handleUnlockCat = (catData: {
-    color: string;
-    name: string;
-    isClothed: boolean;
-    stats: { attack: number; defence: number; speed: number; health: number };
-  }) => {
+  const handleUnlockCat = (tokenId: number) => {
     // This would be passed up to the parent component or handled via context
-    console.log("New cat unlocked:", catData);
+    console.log("New cat unlocked with tokenId:", tokenId);
     // For now, just show an alert
-    alert(`Congratulations! You've unlocked ${catData.name} the ${catData.color} cat!`);
+    alert(`Congratulations! You've unlocked a new cat with tokenId: ${tokenId}!`);
   };
 
   return (
