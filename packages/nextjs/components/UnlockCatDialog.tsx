@@ -39,11 +39,12 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
   });
 
   // Placeholder user level - in real app this would come from props or context
-  const userLevel = 1; // This would be passed as a prop from the parent component
+  const userLevel = 1;
 
   const getCatImage = (color: string) => {
     // Always use normal (non-clothed) version for unlock dialog
-    return `/cats/${color}/normal/${color}-sitting.gif`;
+    const catColor = color === "pink" ? "pinkie" : color;
+    return `/cats/${catColor}/normal/${catColor}-sitting.gif`;
   };
 
   const isColorLocked = (requiredLevel: number) => {
@@ -104,13 +105,15 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
             <Image
               src={getCatImage(selectedColor)}
               alt={`${selectedColor} cat preview`}
-              width={120}
-              height={120}
+              width={180}
+              height={180}
               className="cat-preview-image"
               unoptimized
             />
           </div>
-          <p className="cat-preview-text">{selectedColor.charAt(0).toUpperCase() + selectedColor.slice(1)} Cat</p>
+          <p className="cat-preview-text">
+            {CAT_COLORS.find(c => c.color === selectedColor)?.name || selectedColor} Cat
+          </p>
         </div>
 
         {/* Color Selection */}
@@ -122,9 +125,9 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
               return (
                 <div key={color} className="color-button-container">
                   <button
-                    className={`color-button ${selectedColor === color ? "is-primary" : ""} ${isLocked ? "is-disabled" : ""}`}
-                    onClick={() => !isLocked && setSelectedColor(color)}
-                    disabled={isLocked}
+                    className={`color-button ${selectedColor === color ? "is-primary" : ""} ${isLocked ? "is-disabled" : ""} ${isLocked ? "cursor-not-allowed" : "cursor-pointer"}`}
+                    // Allow selecting (and thus previewing) locked colors
+                    onClick={() => setSelectedColor(color)}
                   >
                     {name}
                     {isLocked && <i className="nes-icon lock is-small" style={{ marginLeft: "5px" }} />}
@@ -161,12 +164,12 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
           >
             {isMinting ? "Minting..." : "Unlock Cat"}
           </button>
-          <button type="button" className="nes-btn is-error" onClick={onClose}>
+          <button className="nes-btn cursor-pointer" onClick={onClose}>
             Cancel
           </button>
         </div>
       </div>
-
+      ---
       <style jsx>{`
         .unlock-cat-dialog {
           max-width: 500px;
@@ -202,8 +205,9 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
 
         .cat-preview-section {
           text-align: center;
-          margin-bottom: 20px;
-          padding: 15px;
+          /* Adjusted margin-bottom */
+          margin-bottom: 10px;
+          padding: 5px 15px;
           background: #f4f4f4;
           border: 3px solid #333;
           box-shadow:
@@ -212,15 +216,17 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
         }
 
         .cat-preview-container {
-          margin-bottom: 10px;
           display: flex;
           justify-content: center;
           align-items: center;
+          /* ADJUSTED: Reduced margin-bottom from 5px to 0 */
+          margin-bottom: 0px;
+          height: 190px;
         }
 
         .cat-preview-image {
-          width: 120px;
-          height: 120px;
+          width: 180px;
+          height: 180px;
           object-fit: contain;
           border: 2px solid #333;
           background: white;
@@ -230,7 +236,8 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
           font-family: monospace;
           font-size: 1rem;
           color: #666;
-          margin: 0;
+          /* ADJUSTED: Reduced top margin from 5px to 0, keeping 5px bottom margin */
+          margin: 0 0 5px 0;
         }
 
         .section-title {
@@ -264,12 +271,11 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
           color: #333;
           font-family: "Pixelify Sans", "Courier New", monospace, sans-serif;
           font-size: 0.9rem;
-          cursor: pointer;
           transition: all 0.2s ease;
           box-shadow: 2px 2px 0px #333;
         }
 
-        .color-button:hover {
+        .color-button:hover:not(.is-disabled) {
           background: #f0f0f0;
         }
 
@@ -279,14 +285,9 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
         }
 
         .color-button.is-disabled {
-          background: #ccc;
-          color: #666;
-          cursor: not-allowed;
-          opacity: 0.6;
-        }
-
-        .color-button.is-disabled:hover {
-          background: #ccc;
+          background: #ccc !important;
+          color: #666 !important;
+          opacity: 0.8;
         }
 
         .color-tooltip {
@@ -347,11 +348,12 @@ export const UnlockCatDialog = ({ onClose, onUnlockCat }: UnlockCatDialogProps) 
           justify-content: center;
           gap: 16px;
           margin-top: 20px;
-          flex-wrap: wrap;
         }
 
-        .dialog-actions .nes-btn {
-          min-width: 120px;
+        .dialog-actions .is-disabled {
+          opacity: 0.6;
+          background: #ccc !important;
+          color: #666 !important;
         }
       `}</style>
     </dialog>
